@@ -13,6 +13,7 @@ Sistema de visão do lambe sujo
 1 - Selecione um diretório
 
 2 - git clone https://github.com/rodrigopassoss/LambeSujo_Client.git
+
 3 - cd LambeSujo_Client
 
 Pronto, agora você tem o repositório em seu computador.
