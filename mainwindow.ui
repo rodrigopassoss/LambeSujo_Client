@@ -11,7 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Lambe Sujo (Client)</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="recurso.qrc">
+    <normaloff>:/icone/gpr.ico</normaloff>:/icone/gpr.ico</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_6">
@@ -180,6 +184,23 @@
          <layout class="QGridLayout" name="gridLayout_2">
           <item row="0" column="0">
            <layout class="QGridLayout" name="gridLayout">
+            <item row="1" column="2" colspan="2">
+             <widget class="QLabel" name="fps_medidor">
+              <property name="styleSheet">
+               <string notr="true"/>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" colspan="2">
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>Atualização(ms):</string>
+              </property>
+             </widget>
+            </item>
             <item row="0" column="0">
              <widget class="QPushButton" name="iniciar">
               <property name="text">
@@ -204,24 +225,6 @@
              <widget class="QPushButton" name="finalizar">
               <property name="text">
                <string>finalizar</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0" colspan="2">
-             <widget class="QLabel" name="label">
-              <property name="text">
-               <string>Atualização(ms):</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2" colspan="2">
-             <widget class="QLabel" name="fps_medidor">
-              <property name="styleSheet">
-               <string notr="true">border: 1px solid black;
-border-radius: 5px;</string>
-              </property>
-              <property name="text">
-               <string/>
               </property>
              </widget>
             </item>
@@ -412,6 +415,8 @@ border-radius: 5px;</string>
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="recurso.qrc"/>
+ </resources>
  <connections/>
 </ui>

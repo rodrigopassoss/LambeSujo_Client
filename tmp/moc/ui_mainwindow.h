@@ -10,6 +10,7 @@
 #define UI_MAINWINDOW_H
 
 #include <QtCore/QVariant>
+#include <QtGui/QIcon>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QCheckBox>
 #include <QtWidgets/QComboBox>
@@ -61,11 +62,11 @@ public:
     QGridLayout *gridLayout_3;
     QGridLayout *gridLayout_2;
     QGridLayout *gridLayout;
+    QLabel *fps_medidor;
+    QLabel *label;
     QPushButton *iniciar;
     QSpacerItem *horizontalSpacer;
     QPushButton *finalizar;
-    QLabel *label;
-    QLabel *fps_medidor;
     QGroupBox *groupBox_2;
     QWidget *layoutWidget;
     QGridLayout *gridLayout_4;
@@ -96,6 +97,9 @@ public:
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
         MainWindow->resize(668, 481);
+        QIcon icon;
+        icon.addFile(QString::fromUtf8(":/icone/gpr.ico"), QSize(), QIcon::Normal, QIcon::Off);
+        MainWindow->setWindowIcon(icon);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         gridLayout_6 = new QGridLayout(centralwidget);
@@ -215,6 +219,17 @@ public:
         gridLayout_2->setObjectName(QString::fromUtf8("gridLayout_2"));
         gridLayout = new QGridLayout();
         gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
+        fps_medidor = new QLabel(groupBox);
+        fps_medidor->setObjectName(QString::fromUtf8("fps_medidor"));
+        fps_medidor->setStyleSheet(QString::fromUtf8(""));
+
+        gridLayout->addWidget(fps_medidor, 1, 2, 1, 2);
+
+        label = new QLabel(groupBox);
+        label->setObjectName(QString::fromUtf8("label"));
+
+        gridLayout->addWidget(label, 1, 0, 1, 2);
+
         iniciar = new QPushButton(groupBox);
         iniciar->setObjectName(QString::fromUtf8("iniciar"));
 
@@ -228,18 +243,6 @@ public:
         finalizar->setObjectName(QString::fromUtf8("finalizar"));
 
         gridLayout->addWidget(finalizar, 0, 3, 1, 1);
-
-        label = new QLabel(groupBox);
-        label->setObjectName(QString::fromUtf8("label"));
-
-        gridLayout->addWidget(label, 1, 0, 1, 2);
-
-        fps_medidor = new QLabel(groupBox);
-        fps_medidor->setObjectName(QString::fromUtf8("fps_medidor"));
-        fps_medidor->setStyleSheet(QString::fromUtf8("border: 1px solid black;\n"
-"border-radius: 5px;"));
-
-        gridLayout->addWidget(fps_medidor, 1, 2, 1, 2);
 
 
         gridLayout_2->addLayout(gridLayout, 0, 0, 1, 1);
@@ -374,7 +377,7 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
+        MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "Lambe Sujo (Client)", nullptr));
         label_4->setText(QCoreApplication::translate("MainWindow", "Vari\303\241veis:", nullptr));
         tipos_variaveis->setItemText(0, QCoreApplication::translate("MainWindow", "posi\303\247\303\243o", nullptr));
         tipos_variaveis->setItemText(1, QCoreApplication::translate("MainWindow", "velocidade", nullptr));
@@ -395,10 +398,10 @@ public:
         tabWidget->setTabText(tabWidget->indexOf(tab), QCoreApplication::translate("MainWindow", "Plots", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tab_2), QCoreApplication::translate("MainWindow", "Estrat\303\251gia", nullptr));
         groupBox->setTitle(QCoreApplication::translate("MainWindow", "Interface com o vss-vision", nullptr));
+        fps_medidor->setText(QString());
+        label->setText(QCoreApplication::translate("MainWindow", "Atualiza\303\247\303\243o(ms):", nullptr));
         iniciar->setText(QCoreApplication::translate("MainWindow", "iniciar", nullptr));
         finalizar->setText(QCoreApplication::translate("MainWindow", "finalizar", nullptr));
-        label->setText(QCoreApplication::translate("MainWindow", "Atualiza\303\247\303\243o(ms):", nullptr));
-        fps_medidor->setText(QString());
         groupBox_2->setTitle(QCoreApplication::translate("MainWindow", "Interface com o VSSRefree", nullptr));
         iniciar_2->setText(QCoreApplication::translate("MainWindow", "iniciar", nullptr));
         finalizar_2->setText(QCoreApplication::translate("MainWindow", "finalizar", nullptr));

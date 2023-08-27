@@ -83,7 +83,8 @@ SOURCES       = Communication.cpp \
 		utils/types/position/position.cpp \
 		utils/types/velocity/velocity.cpp \
 		utils/utils.cpp \
-		vision.cpp tmp/moc/moc_mainwindow.cpp \
+		vision.cpp tmp/rc/qrc_recurso.cpp \
+		tmp/moc/moc_mainwindow.cpp \
 		tmp/moc/moc_refereeclient.cpp \
 		tmp/moc/moc_qcustomplot.cpp \
 		tmp/moc/moc_vision.cpp
@@ -119,6 +120,7 @@ OBJECTS       = tmp/obj/Communication.o \
 		tmp/obj/velocity.o \
 		tmp/obj/utils.o \
 		tmp/obj/vision.o \
+		tmp/obj/qrc_recurso.o \
 		tmp/obj/moc_mainwindow.o \
 		tmp/obj/moc_refereeclient.o \
 		tmp/obj/moc_qcustomplot.o \
@@ -623,11 +625,13 @@ Makefile: LambeSujo_Client.pro ../../../Qt/5.15.2/gcc_64/mkspecs/linux-g++/qmake
 		../../../Qt/5.15.2/gcc_64/mkspecs/features/yacc.prf \
 		../../../Qt/5.15.2/gcc_64/mkspecs/features/lex.prf \
 		LambeSujo_Client.pro \
+		recurso.qrc \
 		/usr/lib/x86_64-linux-gnu/libQt5Core.prl \
 		/usr/lib/x86_64-linux-gnu/libQt5OpenGL.prl \
 		/usr/lib/x86_64-linux-gnu/libQt5Widgets.prl \
 		/usr/lib/x86_64-linux-gnu/libQt5Network.prl \
-		/usr/lib/x86_64-linux-gnu/libQt5Gui.prl
+		/usr/lib/x86_64-linux-gnu/libQt5Gui.prl \
+		/usr/lib/x86_64-linux-gnu/libQt5SerialPort.prl
 	$(QMAKE) -o Makefile LambeSujo_Client.pro -spec linux-g++ CONFIG+=qtquickcompiler
 ../../../Qt/5.15.2/gcc_64/mkspecs/features/spec_pre.prf:
 ../../../Qt/5.15.2/gcc_64/mkspecs/common/unix.conf:
@@ -841,11 +845,13 @@ Makefile: LambeSujo_Client.pro ../../../Qt/5.15.2/gcc_64/mkspecs/linux-g++/qmake
 ../../../Qt/5.15.2/gcc_64/mkspecs/features/yacc.prf:
 ../../../Qt/5.15.2/gcc_64/mkspecs/features/lex.prf:
 LambeSujo_Client.pro:
+recurso.qrc:
 /usr/lib/x86_64-linux-gnu/libQt5Core.prl:
 /usr/lib/x86_64-linux-gnu/libQt5OpenGL.prl:
 /usr/lib/x86_64-linux-gnu/libQt5Widgets.prl:
 /usr/lib/x86_64-linux-gnu/libQt5Network.prl:
 /usr/lib/x86_64-linux-gnu/libQt5Gui.prl:
+/usr/lib/x86_64-linux-gnu/libQt5SerialPort.prl:
 qmake: FORCE
 	@$(QMAKE) -o Makefile LambeSujo_Client.pro -spec linux-g++ CONFIG+=qtquickcompiler
 
@@ -860,6 +866,7 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
+	$(COPY_FILE) --parents recurso.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents ../../../Qt/5.15.2/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents Communication.h constants/constants.h filters/kalman/kalmanfilter.h filters/kalman/matrix/matrix.h filters/kalman/state/kalmanstate.h filters/loss/lossfilter.h filters/noise/noisefilter.h mainwindow.h proto/command.pb.h proto/common.pb.h proto/messages_robocup_ssl_detection.pb.h proto/messages_robocup_ssl_geometry.pb.h proto/packet.pb.h proto/replacement.pb.h proto/vssref_command.pb.h proto/vssref_common.pb.h proto/vssref_placement.pb.h proto/wrapper.pb.h refereeclient.h utils/exithandler/exithandler.h utils/qcustomplot.h utils/text/text.h utils/timer/timer.h utils/types/angle/angle.h utils/types/field/field.h utils/types/field/field_default_3v3.h utils/types/field/field_default_5v5.h utils/types/messagetype/messagetype.h utils/types/object/object.h utils/types/placedata/placedata.h utils/types/position/position.h utils/types/velocity/velocity.h utils/utils.h vision.h $(DISTDIR)/
 	$(COPY_FILE) --parents Communication.cpp constants/constants.cpp filters/kalman/kalmanfilter.cpp filters/kalman/matrix/matrix.cpp filters/kalman/state/kalmanstate.cpp filters/loss/lossfilter.cpp filters/noise/noisefilter.cpp main.cpp mainwindow.cpp proto/command.pb.cc proto/common.pb.cc proto/messages_robocup_ssl_detection.pb.cc proto/messages_robocup_ssl_geometry.pb.cc proto/packet.pb.cc proto/replacement.pb.cc proto/vssref_command.pb.cc proto/vssref_common.pb.cc proto/vssref_placement.pb.cc proto/wrapper.pb.cc refereeclient.cpp utils/exithandler/exithandler.cpp utils/qcustomplot.cpp utils/text/text.cpp utils/timer/timer.cpp utils/types/angle/angle.cpp utils/types/field/field.cpp utils/types/object/object.cpp utils/types/placedata/placedata.cpp utils/types/position/position.cpp utils/types/velocity/velocity.cpp utils/utils.cpp vision.cpp $(DISTDIR)/
@@ -887,8 +894,14 @@ check: first
 
 benchmark: first
 
-compiler_rcc_make_all:
+compiler_rcc_make_all: tmp/rc/qrc_recurso.cpp
 compiler_rcc_clean:
+	-$(DEL_FILE) tmp/rc/qrc_recurso.cpp
+tmp/rc/qrc_recurso.cpp: recurso.qrc \
+		../../../Qt/5.15.2/gcc_64/bin/rcc \
+		gpr.ico
+	/home/rodrigopassos/Qt/5.15.2/gcc_64/bin/rcc -name recurso recurso.qrc -o tmp/rc/qrc_recurso.cpp
+
 compiler_moc_predefs_make_all: tmp/moc/moc_predefs.h
 compiler_moc_predefs_clean:
 	-$(DEL_FILE) tmp/moc/moc_predefs.h
@@ -2724,7 +2737,7 @@ compiler_yacc_impl_make_all:
 compiler_yacc_impl_clean:
 compiler_lex_make_all:
 compiler_lex_clean:
-compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean compiler_uic_clean 
+compiler_clean: compiler_rcc_clean compiler_moc_predefs_clean compiler_moc_header_clean compiler_uic_clean 
 
 ####### Compile
 
@@ -5311,6 +5324,9 @@ tmp/obj/vision.o: vision.cpp vision.h \
 		../../../Qt/5.15.2/gcc_64/include/QtCore/qfiledevice.h \
 		utils/text/text.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o tmp/obj/vision.o vision.cpp
+
+tmp/obj/qrc_recurso.o: tmp/rc/qrc_recurso.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o tmp/obj/qrc_recurso.o tmp/rc/qrc_recurso.cpp
 
 tmp/obj/moc_mainwindow.o: tmp/moc/moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o tmp/obj/moc_mainwindow.o tmp/moc/moc_mainwindow.cpp

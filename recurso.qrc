@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/icone">
+        <file>gpr.ico</file>
+    </qresource>
+</RCC>
