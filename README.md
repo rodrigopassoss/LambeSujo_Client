@@ -12,9 +12,8 @@ Sistema de visão do lambe sujo
 
 1 - Selecione um diretório
 
-2 - git clone https://github.com/rodrigopassoss/LambeSujo-VisionSystem.git
-
-3 - cd vision
+2 - git clone https://github.com/rodrigopassoss/LambeSujo_Client.git
+3 - cd LambeSujo_Client
 
 Pronto, agora você tem o repositório em seu computador.
 
@@ -24,7 +23,7 @@ Sempre que for mexer no código, verificar se há novas alterações pra trabalh
 
 2 - git pull origin master (check updates)
 
-# Criar novo galho para edição
+# Criar novo galho para edição (Para Contribuir)
 1 - git checkout -b novoGalho
 
  Após fazer mudanças, você deve salvá-las e refazer o upload dos arquivos.
