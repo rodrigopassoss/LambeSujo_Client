@@ -1,0 +1,332 @@
+#include "vision.h"
+
+Vision::Vision(Constants *constants) {
+    // Taking constants
+    _constants = constants;
+
+    // Taking network data
+    _visionAddress = getConstants()->visionAddress();
+    _visionPort = getConstants()->visionPort();
+
+    // Init objects
+    initObjects();
+
+    std::cout << Text::blue("[VISION] ", true) + Text::bold("Objeto Criado!") + '\n';
+}
+
+Vision::Vision(QString visionAddress, quint16 visionPort)
+{
+    // Taking network data
+    _visionAddress = visionAddress;
+    _visionPort = visionPort;
+
+    // Init objects
+    initObjects();
+}
+
+Vision::~Vision() {
+    deleteObjects();
+}
+
+void Vision::initialization() {
+    // Binding and connecting in network
+    bindAndConnect();
+
+    std::cout << Text::blue("[VISION] ", true) + Text::bold("Module started at address '" + _visionAddress.toStdString() + "' and port '" + std::to_string(_visionPort) + "'.") + '\n';
+}
+
+void Vision::loop() {
+    while(_visionClient->hasPendingDatagrams()) {
+        // Creating auxiliary vars
+        SSL_WrapperPacket wrapper;
+        QNetworkDatagram datagram;
+
+        // Reading datagram and checking if it is valid
+        datagram = _visionClient->receiveDatagram();
+        if(!datagram.isValid()) {
+            continue;
+        }
+
+        // Parsing datagram and checking if it worked properly
+        if(wrapper.ParseFromArray(datagram.data().data(), datagram.data().size()) == false) {
+            std::cout << Text::blue("[VISION] ", true) << Text::red("Wrapper packet parsing error.", true) + '\n';
+            continue;
+        }
+
+        if(wrapper.has_detection()) {
+            // Lock mutex for write
+            _dataMutex.lockForWrite();
+
+            // Clear objects control
+            clearObjectsControl();
+
+            // Take frame
+            const auto& detection = wrapper.detection();
+
+            // Parse ball
+            {
+                using BALL = std::pair<float, Position>;
+                QVector<BALL> balls;
+                for (const auto& ball : detection.balls()) {
+                    balls += BALL(ball.confidence(), Position(true, ball.x() / 1000., ball.y() / 1000.));
+                }
+                /* TODO: How we can do it better? (ball confidence) */ 
+                std::sort(balls.begin(), balls.end(), [](BALL a, BALL b) { return a.first > b.first; });
+
+                if (!balls.empty()) {
+                    _ballObject->updateObject(balls.front().first/ 1000., balls.front().second);
+                }
+                else {
+                    _ballObject->updateObject(0.0f, Position(false, 0.0, 0.0));
+                }
+                // Debugging ball
+                std::cout << "\n===== BALL =====\n";
+                QString ballDebugStr = QString("Ball x: %1 y: %2")
+                                    .arg(_ballObject->getPosition().x())
+                                    .arg(_ballObject->getPosition().y());
+                std::cout << ballDebugStr.toStdString() + '\n';
+
+            }
+
+            // Parse blue robots
+            std::cout << "\n===== BLUE TEAM =====\n";
+            for (const auto& robot : detection.robots_blue()) {
+                // Take id
+                quint8 robotId = robot.robot_id();
+
+                // Get object
+                Object *robotObject = _objects.value(VSSRef::Color::BLUE)->value(robotId);
+                robotObject->updateObject(robot.confidence(), Position(true, robot.x() / 1000., robot.y() / 1000.), Angle(true, robot.orientation()));
+
+                // Update control to true
+                _objectsControl.value(VSSRef::Color::BLUE)->insert(robotId, true);
+
+                QString robotDebugStr = QString("Robot %1 -> x: %2 y: %3 ori: %4")
+                        .arg(robotId)
+                        .arg(robotObject->getPosition().x())
+                        .arg(robotObject->getPosition().y())
+                        .arg(robotObject->getOrientation().value());
+                std::cout << robotDebugStr.toStdString() + '\n';
+
+            }
+
+            std::cout << "\n===== YELLOW TEAM =====\n";
+            // Parse yellow robots
+            for (const auto& robot : detection.robots_yellow()) {
+                // Take id
+                quint8 robotId = robot.robot_id();
+
+                // Get object
+                Object *robotObject = _objects.value(VSSRef::Color::YELLOW)->value(robotId);
+                robotObject->updateObject(robot.confidence(), Position(true, robot.x() / 1000., robot.y() / 1000.), Angle(true, robot.orientation()));
+
+                // Update control to true
+                _objectsControl.value(VSSRef::Color::YELLOW)->insert(robotId, true);
+
+                QString robotDebugStr = QString("Robot %1 -> x: %2 y: %3 ori: %4")
+                                            .arg(robotId)
+                                            .arg(robotObject->getPosition().x())
+                                            .arg(robotObject->getPosition().y())
+                                            .arg(robotObject->getOrientation().value());
+                std::cout << robotDebugStr.toStdString() + '\n';
+            }
+
+            // Parse robots that didn't appeared
+            for(int i = VSSRef::Color::BLUE; i <= VSSRef::Color::YELLOW; i++) {
+                // Take control hash
+                QHash<quint8, bool> *idsControl = _objectsControl.value(VSSRef::Color(i));
+
+                // Take ids list and iterate on it
+                QList<quint8> idList = idsControl->keys();
+                QList<quint8>::iterator it;
+
+                for(it = idList.begin(); it != idList.end(); it++) {
+                    // If not updated (== false)
+                    if(idsControl->value((*it)) == false) {
+                        // Take object
+                        Object *robotObject = _objects.value(VSSRef::Color(i))->value((*it));
+
+                        // Update it with invalid values
+                        robotObject->updateObject(0.0f, Position(false, 0.0, 0.0), Angle(false, 0.0));
+                    }
+                }
+            }
+
+            // Release mutex
+            _dataMutex.unlock();
+
+            emit visionUpdated();
+        }
+    }
+}
+
+void Vision::finalization() {
+    // Closing socket
+    if(_visionClient->isOpen()) {
+        _visionClient->close();
+    }
+
+    // Deleting vision client
+    delete _visionClient;
+
+    std::cout << Text::blue("[VISION] ", true) + Text::bold("Module finished.") + '\n';
+}
+
+void Vision::bindAndConnect() {
+    // Creating socket
+    _visionClient = new QUdpSocket();
+
+    // Binding in defined network data
+    if(_visionClient->bind(QHostAddress(_visionAddress), _visionPort, QUdpSocket::ShareAddress) == false) {
+        std::cout << Text::blue("[VISION] " , true) << Text::red("Error while binding socket.", true) + '\n';
+        return ;
+    }
+
+    // Joining multicast group
+    if(_visionClient->joinMulticastGroup(QHostAddress(_visionAddress)) == false) {
+        std::cout << Text::blue("[VISION] ", true) << Text::red("Error while joining multicast.", true) + '\n';
+        return ;
+    }
+}
+
+void Vision::initObjects() {
+    // Init ball object
+    _ballObject = new Object(getConstants()->useKalman());
+
+    // Init robot objects
+    for(int i = VSSRef::Color::BLUE; i <= VSSRef::Color::YELLOW; i++) {
+        // Init objects
+        QHash<quint8, Object*> *teamObjects = new QHash<quint8, Object*>();
+        _objects.insert(VSSRef::Color(i), teamObjects);
+        for(int j = 0; j < getConstants()->qtPlayers(); j++) {
+            teamObjects->insert(j, new Object(getConstants()->useKalman()));
+        }
+
+        // Init objects control
+        QHash<quint8, bool> *teamObjectsControl = new QHash<quint8, bool>();
+        _objectsControl.insert(VSSRef::Color(i), teamObjectsControl);
+        for(int j = 0; j < getConstants()->qtPlayers(); j++) {
+            teamObjectsControl->insert(j, false);
+        }
+    }
+}
+
+void Vision::deleteObjects() {
+    // Deleting ball object
+    delete _ballObject;
+
+    // Deleting player objects
+    QList<VSSRef::Color> teamColors = _objects.keys();
+    QList<VSSRef::Color>::iterator it;
+
+    for(it = teamColors.begin(); it != teamColors.end(); it++) {
+        // Take team objects control and delete it
+        QHash<quint8, bool> *teamObjectsControl = _objectsControl.take((*it));
+        delete teamObjectsControl;
+
+        // Take team objects
+        QHash<quint8, Object*> *teamObjects = _objects.take((*it));
+
+        // Take registered ids and iterate on it
+        QList<quint8> idList = teamObjects->keys();
+        QList<quint8>::iterator itId;
+
+        for(itId = idList.begin(); itId != idList.end(); itId++) {
+            // Take object
+            Object *playerObject = teamObjects->take((*itId));
+            // Delete it
+            delete playerObject;
+        }
+
+        // delete teamObjects
+        delete teamObjects;
+    }
+}
+
+void Vision::clearObjectsControl() {
+    QList<VSSRef::Color> teamColors = _objects.keys();
+
+    for(int i = VSSRef::Color::BLUE; i <= VSSRef::Color::YELLOW; i++) {
+        QHash<quint8, bool> *teamObjectsControl = _objectsControl.value(VSSRef::Color(i));
+
+        // Take registered ids
+        QList<quint8> objectsId = teamObjectsControl->keys();
+        for(int j = 0; j < objectsId.size(); j++) {
+            teamObjectsControl->insert(objectsId.at(j), false);
+        }
+    }
+}
+
+QList<quint8> Vision::getAvailablePlayers(VSSRef::Color teamColor) {
+    _dataMutex.lockForRead();
+    QList<quint8> availableList;
+
+    // Take object list and iterate it
+    QHash<quint8, Object*> *objectList = _objects.value(teamColor);
+    QList<quint8> idList = objectList->keys();
+    QList<quint8>::iterator it;
+
+    for(it = idList.begin(); it != idList.end(); it++) {
+        // If object position isn't invalid, add it id to list
+        if(!objectList->value((*it))->getPosition().isInvalid()) {
+            availableList.push_back((*it));
+        }
+    }
+    _dataMutex.unlock();
+
+    return availableList;
+}
+
+Position Vision::getPlayerPosition(VSSRef::Color teamColor, quint8 playerId) {
+    _dataMutex.lockForRead();
+    Object *playerObject = _objects.value(teamColor)->value(playerId);
+    Position pos = playerObject->getPosition();
+    _dataMutex.unlock();
+
+    return pos;
+}
+
+Velocity Vision::getPlayerVelocity(VSSRef::Color teamColor, quint8 playerId) {
+    _dataMutex.lockForRead();
+    Object *playerObject = _objects.value(teamColor)->value(playerId);
+    Velocity vel = playerObject->getVelocity();
+    _dataMutex.unlock();
+
+    return vel;
+}
+
+Angle Vision::getPlayerOrientation(VSSRef::Color teamColor, quint8 playerId) {
+    _dataMutex.lockForRead();
+    Object *playerObject = _objects.value(teamColor)->value(playerId);
+    Angle ori = playerObject->getOrientation();
+    _dataMutex.unlock();
+
+    return ori;
+}
+
+Position Vision::getBallPosition() {
+    _dataMutex.lockForRead();
+    Position pos = _ballObject->getPosition();
+    _dataMutex.unlock();
+
+    return pos;
+}
+
+Velocity Vision::getBallVelocity() {
+    _dataMutex.lockForRead();
+    Velocity vel = _ballObject->getVelocity();
+    _dataMutex.unlock();
+
+    return vel;
+}
+
+Constants* Vision::getConstants() {
+    if(_constants == nullptr) {
+        std::cout << Text::red("[ERROR] ", true) << Text::bold("Constants with nullptr value at Vision") + '\n';
+    }
+    else {
+        return _constants;
+    }
+
+    return nullptr;
+}
