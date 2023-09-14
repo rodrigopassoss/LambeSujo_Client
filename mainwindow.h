@@ -14,6 +14,7 @@
 #include "utils/qcustomplot.h"
 #include "Communication.h"
 #include "math.h"
+#include "estrategia.h"
 
 using namespace std;
 
@@ -43,8 +44,8 @@ public:
 
     //Informações
     Position ball_pos; Velocity ball_vel;
-    Position rblue_pos[3];Velocity rblue_vel[3];
-    Position ryellow_pos[3];Velocity ryellow_vel[3];
+    Position rblue_pos[3];double rblue_ori[3];Velocity rblue_vel[3];
+    Position ryellow_pos[3];double ryellow_ori[3];Velocity ryellow_vel[3];
 
     //Plot das Velocidades
     void plot();
@@ -61,12 +62,24 @@ public:
     //Contagem de FPS
     double fps, start, fim;
 
+    //Função para enviar comandos para as rodas
+    void sendCommand(QVector<int> index,QVector<double> vL, QVector<double> vR);
+
+    //Estratégia
+    int time_estrategia;
+    estrategia *azul, *amarelo;
+
 
 private slots:
+
     void on_iniciar_clicked();
+
     void updateData();
+
     void updateFPS();
+
     void updateReferee();
+
     void on_iniciar_2_clicked();
 
     void on_conectar_serial_clicked();
@@ -78,6 +91,10 @@ private slots:
     void on_objetos_currentIndexChanged(int index);
 
     void on_time_currentIndexChanged(int index);
+
+    void on_slider_vl_valueChanged(int value);
+
+    void on_slider_vr_valueChanged(int value);
 
 private:
     Ui::MainWindow *ui;

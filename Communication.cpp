@@ -13,6 +13,7 @@ communication::communication()
         i++;
 
     }
+    std::cout << Text::yellow("[Comunicação] ", true) << Text::bold("Objeto Criado!") + '\n';
     status = "Desconectado";
     button_status = "Conectar";
     baund_rate.clear();
@@ -54,15 +55,17 @@ void communication::connectToSerial()
 
         flag_comunicacao = 1; // altera o flag de comunicação 0 - SemComunicação e 1 - ComComunicação
 
+        std::cout << Text::yellow("[Comunicação] ", true) << Text::bold("Porta serial foi conectada!") + '\n';
 
         return;
 
     }
 
-
+    std::cout << Text::yellow("[Comunicação] ", true) << Text::bold("Falha ao Conectar!") + '\n';
     status = "Falha ao tentar conectar";
     button_status = "Conectar";
     this->serialPort->close();
+
 
 }
 

@@ -54,6 +54,7 @@ OBJECTS_DIR   = tmp/obj/
 
 SOURCES       = Communication.cpp \
 		constants/constants.cpp \
+		estrategia.cpp \
 		filters/kalman/kalmanfilter.cpp \
 		filters/kalman/matrix/matrix.cpp \
 		filters/kalman/state/kalmanstate.cpp \
@@ -90,6 +91,7 @@ SOURCES       = Communication.cpp \
 		tmp/moc/moc_vision.cpp
 OBJECTS       = tmp/obj/Communication.o \
 		tmp/obj/constants.o \
+		tmp/obj/estrategia.o \
 		tmp/obj/kalmanfilter.o \
 		tmp/obj/matrix.o \
 		tmp/obj/kalmanstate.o \
@@ -338,6 +340,7 @@ DIST          = ../../../Qt/5.15.2/gcc_64/mkspecs/features/spec_pre.prf \
 		../../../Qt/5.15.2/gcc_64/mkspecs/features/lex.prf \
 		LambeSujo_Client.pro Communication.h \
 		constants/constants.h \
+		estrategia.h \
 		filters/kalman/kalmanfilter.h \
 		filters/kalman/matrix/matrix.h \
 		filters/kalman/state/kalmanstate.h \
@@ -371,6 +374,7 @@ DIST          = ../../../Qt/5.15.2/gcc_64/mkspecs/features/spec_pre.prf \
 		utils/utils.h \
 		vision.h Communication.cpp \
 		constants/constants.cpp \
+		estrategia.cpp \
 		filters/kalman/kalmanfilter.cpp \
 		filters/kalman/matrix/matrix.cpp \
 		filters/kalman/state/kalmanstate.cpp \
@@ -868,8 +872,8 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents recurso.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents ../../../Qt/5.15.2/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents Communication.h constants/constants.h filters/kalman/kalmanfilter.h filters/kalman/matrix/matrix.h filters/kalman/state/kalmanstate.h filters/loss/lossfilter.h filters/noise/noisefilter.h mainwindow.h proto/command.pb.h proto/common.pb.h proto/messages_robocup_ssl_detection.pb.h proto/messages_robocup_ssl_geometry.pb.h proto/packet.pb.h proto/replacement.pb.h proto/vssref_command.pb.h proto/vssref_common.pb.h proto/vssref_placement.pb.h proto/wrapper.pb.h refereeclient.h utils/exithandler/exithandler.h utils/qcustomplot.h utils/text/text.h utils/timer/timer.h utils/types/angle/angle.h utils/types/field/field.h utils/types/field/field_default_3v3.h utils/types/field/field_default_5v5.h utils/types/messagetype/messagetype.h utils/types/object/object.h utils/types/placedata/placedata.h utils/types/position/position.h utils/types/velocity/velocity.h utils/utils.h vision.h $(DISTDIR)/
-	$(COPY_FILE) --parents Communication.cpp constants/constants.cpp filters/kalman/kalmanfilter.cpp filters/kalman/matrix/matrix.cpp filters/kalman/state/kalmanstate.cpp filters/loss/lossfilter.cpp filters/noise/noisefilter.cpp main.cpp mainwindow.cpp proto/command.pb.cc proto/common.pb.cc proto/messages_robocup_ssl_detection.pb.cc proto/messages_robocup_ssl_geometry.pb.cc proto/packet.pb.cc proto/replacement.pb.cc proto/vssref_command.pb.cc proto/vssref_common.pb.cc proto/vssref_placement.pb.cc proto/wrapper.pb.cc refereeclient.cpp utils/exithandler/exithandler.cpp utils/qcustomplot.cpp utils/text/text.cpp utils/timer/timer.cpp utils/types/angle/angle.cpp utils/types/field/field.cpp utils/types/object/object.cpp utils/types/placedata/placedata.cpp utils/types/position/position.cpp utils/types/velocity/velocity.cpp utils/utils.cpp vision.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents Communication.h constants/constants.h estrategia.h filters/kalman/kalmanfilter.h filters/kalman/matrix/matrix.h filters/kalman/state/kalmanstate.h filters/loss/lossfilter.h filters/noise/noisefilter.h mainwindow.h proto/command.pb.h proto/common.pb.h proto/messages_robocup_ssl_detection.pb.h proto/messages_robocup_ssl_geometry.pb.h proto/packet.pb.h proto/replacement.pb.h proto/vssref_command.pb.h proto/vssref_common.pb.h proto/vssref_placement.pb.h proto/wrapper.pb.h refereeclient.h utils/exithandler/exithandler.h utils/qcustomplot.h utils/text/text.h utils/timer/timer.h utils/types/angle/angle.h utils/types/field/field.h utils/types/field/field_default_3v3.h utils/types/field/field_default_5v5.h utils/types/messagetype/messagetype.h utils/types/object/object.h utils/types/placedata/placedata.h utils/types/position/position.h utils/types/velocity/velocity.h utils/utils.h vision.h $(DISTDIR)/
+	$(COPY_FILE) --parents Communication.cpp constants/constants.cpp estrategia.cpp filters/kalman/kalmanfilter.cpp filters/kalman/matrix/matrix.cpp filters/kalman/state/kalmanstate.cpp filters/loss/lossfilter.cpp filters/noise/noisefilter.cpp main.cpp mainwindow.cpp proto/command.pb.cc proto/common.pb.cc proto/messages_robocup_ssl_detection.pb.cc proto/messages_robocup_ssl_geometry.pb.cc proto/packet.pb.cc proto/replacement.pb.cc proto/vssref_command.pb.cc proto/vssref_common.pb.cc proto/vssref_placement.pb.cc proto/wrapper.pb.cc refereeclient.cpp utils/exithandler/exithandler.cpp utils/qcustomplot.cpp utils/text/text.cpp utils/timer/timer.cpp utils/types/angle/angle.cpp utils/types/field/field.cpp utils/types/object/object.cpp utils/types/placedata/placedata.cpp utils/types/position/position.cpp utils/types/velocity/velocity.cpp utils/utils.cpp vision.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents mainwindow.ui $(DISTDIR)/
 
 
@@ -1465,6 +1469,7 @@ tmp/moc/moc_mainwindow.cpp: mainwindow.h \
 		../../../Qt/5.15.2/gcc_64/include/QtSerialPort/qserialportglobal.h \
 		../../../Qt/5.15.2/gcc_64/include/QtSerialPort/QSerialPortInfo \
 		../../../Qt/5.15.2/gcc_64/include/QtSerialPort/qserialportinfo.h \
+		estrategia.h \
 		tmp/moc/moc_predefs.h \
 		../../../Qt/5.15.2/gcc_64/bin/moc
 	/home/rodrigopassos/Qt/5.15.2/gcc_64/bin/moc $(DEFINES) --include /home/rodrigopassos/Documentos/vsss_ws/LambeSujo_Client/tmp/moc/moc_predefs.h -I/home/rodrigopassos/Qt/5.15.2/gcc_64/mkspecs/linux-g++ -I/home/rodrigopassos/Documentos/vsss_ws/LambeSujo_Client -I/home/rodrigopassos/Qt/5.15.2/gcc_64/include -I/home/rodrigopassos/Qt/5.15.2/gcc_64/include/QtOpenGL -I/home/rodrigopassos/Qt/5.15.2/gcc_64/include/QtWidgets -I/home/rodrigopassos/Qt/5.15.2/gcc_64/include/QtGui -I/home/rodrigopassos/Qt/5.15.2/gcc_64/include/QtNetwork -I/home/rodrigopassos/Qt/5.15.2/gcc_64/include/QtSerialPort -I/home/rodrigopassos/Qt/5.15.2/gcc_64/include/QtCore -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include mainwindow.h -o tmp/moc/moc_mainwindow.cpp
@@ -2812,7 +2817,8 @@ tmp/obj/Communication.o: Communication.cpp Communication.h \
 		../../../Qt/5.15.2/gcc_64/include/QtCore/qcontiguouscache.h \
 		../../../Qt/5.15.2/gcc_64/include/QtCore/qsharedpointer.h \
 		../../../Qt/5.15.2/gcc_64/include/QtCore/qsharedpointer_impl.h \
-		../../../Qt/5.15.2/gcc_64/include/QtCore/QStringList
+		../../../Qt/5.15.2/gcc_64/include/QtCore/QStringList \
+		utils/text/text.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o tmp/obj/Communication.o Communication.cpp
 
 tmp/obj/constants.o: constants/constants.cpp constants/constants.h \
@@ -2902,6 +2908,119 @@ tmp/obj/constants.o: constants/constants.cpp constants/constants.h \
 		utils/timer/timer.h \
 		filters/noise/noisefilter.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o tmp/obj/constants.o constants/constants.cpp
+
+tmp/obj/estrategia.o: estrategia.cpp estrategia.h \
+		vision.h \
+		../../../Qt/5.15.2/gcc_64/include/QtNetwork/QUdpSocket \
+		../../../Qt/5.15.2/gcc_64/include/QtNetwork/qudpsocket.h \
+		../../../Qt/5.15.2/gcc_64/include/QtNetwork/qtnetworkglobal.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qglobal.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qconfig.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qtcore-config.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qsystemdetection.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qprocessordetection.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qcompilerdetection.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qtypeinfo.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qsysinfo.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qlogging.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qflags.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qatomic.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qbasicatomic.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qgenericatomic.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qatomic_cxx11.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qatomic_msvc.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qglobalstatic.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qmutex.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qnumeric.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qversiontagging.h \
+		../../../Qt/5.15.2/gcc_64/include/QtNetwork/qtnetwork-config.h \
+		../../../Qt/5.15.2/gcc_64/include/QtNetwork/qabstractsocket.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qiodevice.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qobject.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qobjectdefs.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qnamespace.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qstring.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qchar.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qbytearray.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qrefcount.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qarraydata.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qstringliteral.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qstringalgorithms.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qstringview.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qstringbuilder.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qlist.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qalgorithms.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qiterator.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qhashfunctions.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qpair.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qvector.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qcontainertools_impl.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qpoint.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qbytearraylist.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qstringlist.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qregexp.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qstringmatcher.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qcoreevent.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qscopedpointer.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qmetatype.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qvarlengtharray.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qcontainerfwd.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qobject_impl.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qdebug.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qhash.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qmap.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qtextstream.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qlocale.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qvariant.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qshareddata.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qset.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qcontiguouscache.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qsharedpointer.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		../../../Qt/5.15.2/gcc_64/include/QtNetwork/qhostaddress.h \
+		../../../Qt/5.15.2/gcc_64/include/QtNetwork/QNetworkDatagram \
+		../../../Qt/5.15.2/gcc_64/include/QtNetwork/qnetworkdatagram.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/QReadWriteLock \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qreadwritelock.h \
+		utils/types/object/object.h \
+		utils/types/angle/angle.h \
+		filters/loss/lossfilter.h \
+		utils/timer/timer.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/QString \
+		filters/noise/noisefilter.h \
+		filters/kalman/kalmanfilter.h \
+		utils/types/position/position.h \
+		utils/types/velocity/velocity.h \
+		filters/kalman/state/kalmanstate.h \
+		filters/kalman/matrix/matrix.h \
+		proto/vssref_common.pb.h \
+		proto/wrapper.pb.h \
+		proto/messages_robocup_ssl_detection.pb.h \
+		proto/messages_robocup_ssl_geometry.pb.h \
+		constants/constants.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/QJsonDocument \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qjsondocument.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qjsonvalue.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qcborvalue.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qdatetime.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qcborcommon.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qregularexpression.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qurl.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qurlquery.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/quuid.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/QJsonObject \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qjsonobject.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/QVariantMap \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/QFile \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qfile.h \
+		../../../Qt/5.15.2/gcc_64/include/QtCore/qfiledevice.h \
+		utils/text/text.h \
+		refereeclient.h \
+		proto/vssref_command.pb.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o tmp/obj/estrategia.o estrategia.cpp
 
 tmp/obj/kalmanfilter.o: filters/kalman/kalmanfilter.cpp filters/kalman/kalmanfilter.h \
 		../../../Qt/5.15.2/gcc_64/include/QtCore/QString \
@@ -3576,6 +3695,7 @@ tmp/obj/main.o: main.cpp mainwindow.h \
 		../../../Qt/5.15.2/gcc_64/include/QtSerialPort/qserialportglobal.h \
 		../../../Qt/5.15.2/gcc_64/include/QtSerialPort/QSerialPortInfo \
 		../../../Qt/5.15.2/gcc_64/include/QtSerialPort/qserialportinfo.h \
+		estrategia.h \
 		../../../Qt/5.15.2/gcc_64/include/QtWidgets/QApplication
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o tmp/obj/main.o main.cpp
 
@@ -4133,7 +4253,9 @@ tmp/obj/mainwindow.o: mainwindow.cpp mainwindow.h \
 		../../../Qt/5.15.2/gcc_64/include/QtSerialPort/qserialportglobal.h \
 		../../../Qt/5.15.2/gcc_64/include/QtSerialPort/QSerialPortInfo \
 		../../../Qt/5.15.2/gcc_64/include/QtSerialPort/qserialportinfo.h \
+		estrategia.h \
 		tmp/moc/ui_mainwindow.h \
+		../../../Qt/5.15.2/gcc_64/include/QtGui/QIcon \
 		../../../Qt/5.15.2/gcc_64/include/QtWidgets/QApplication \
 		../../../Qt/5.15.2/gcc_64/include/QtWidgets/QCheckBox \
 		../../../Qt/5.15.2/gcc_64/include/QtWidgets/QComboBox \
@@ -4141,9 +4263,12 @@ tmp/obj/mainwindow.o: mainwindow.cpp mainwindow.h \
 		../../../Qt/5.15.2/gcc_64/include/QtWidgets/QFrame \
 		../../../Qt/5.15.2/gcc_64/include/QtWidgets/QGridLayout \
 		../../../Qt/5.15.2/gcc_64/include/QtWidgets/QGroupBox \
+		../../../Qt/5.15.2/gcc_64/include/QtWidgets/QLCDNumber \
 		../../../Qt/5.15.2/gcc_64/include/QtWidgets/QMenuBar \
 		../../../Qt/5.15.2/gcc_64/include/QtWidgets/QPushButton \
+		../../../Qt/5.15.2/gcc_64/include/QtWidgets/QSlider \
 		../../../Qt/5.15.2/gcc_64/include/QtWidgets/QSpacerItem \
+		../../../Qt/5.15.2/gcc_64/include/QtWidgets/QSpinBox \
 		../../../Qt/5.15.2/gcc_64/include/QtWidgets/QStatusBar \
 		../../../Qt/5.15.2/gcc_64/include/QtWidgets/QTabWidget
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o tmp/obj/mainwindow.o mainwindow.cpp

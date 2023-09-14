@@ -45,6 +45,11 @@ MainWindow::MainWindow(QWidget *parent)
    Defplot();
    tipo_plot = 0;objeto_plot = 0;cor_plot = 0;
 
+   //Cria os objetos para estratégia
+   azul = new estrategia(VSSRef::BLUE);
+   amarelo = new estrategia(VSSRef::YELLOW);
+   time_estrategia = VSSRef::YELLOW; //Configurável via interface
+
 
 }
 
@@ -56,6 +61,8 @@ MainWindow::~MainWindow()
    delete visionClient;
    delete SerialComm;
    delete refereeClient;
+   delete azul;
+   delete amarelo;
    delete ui;
 }
 
@@ -82,21 +89,51 @@ void MainWindow::updateData()
     ball_vel = visionClient->getBallVelocity();
     QList<quint8> blue_robots = visionClient->getAvailablePlayers(VSSRef::BLUE);
     QList<quint8> yellow_robots = visionClient->getAvailablePlayers(VSSRef::YELLOW);
+
+    QVector<int> azul_robots;
     for(int i = 0; i < blue_robots.size();i++)
     {
         rblue_pos[i] = visionClient->getPlayerPosition(VSSRef::BLUE,blue_robots.at(i));
+        auto angle = visionClient->getPlayerOrientation(VSSRef::BLUE,blue_robots.at(i));
+        rblue_ori[i] = (double)angle.value();
         rblue_vel[i] = visionClient->getPlayerVelocity(VSSRef::BLUE,blue_robots.at(i));
+        azul_robots.append(i);
     }
+    QVector<int> amarelo_robots;
     for(int i = 0; i < yellow_robots.size();i++)
     {
         ryellow_pos[i] = visionClient->getPlayerPosition(VSSRef::YELLOW,yellow_robots.at(i));
+        auto angle = visionClient->getPlayerOrientation(VSSRef::YELLOW,yellow_robots.at(i));
+        ryellow_ori[i] = (double)angle.value();
         ryellow_vel[i] = visionClient->getPlayerVelocity(VSSRef::YELLOW,yellow_robots.at(i));
+        amarelo_robots.append(1);
     }
+
+    if(time_estrategia==VSSRef::YELLOW)
+    {
+        amarelo->atualiza_posicoes(amarelo_robots,rblue_pos,rblue_ori,rblue_vel,
+                                               ryellow_pos,ryellow_ori,ryellow_vel,
+                                               ball_pos,ball_vel);
+        amarelo->controle_e_navegacao();
+
+        this->sendCommand(amarelo_robots,amarelo->vL,amarelo->vR);
+    }else //Caso nosso time seja o azul
+    {
+        azul->atualiza_posicoes(azul_robots,rblue_pos,rblue_ori,rblue_vel,
+                                   ryellow_pos,ryellow_ori,ryellow_vel,
+                                   ball_pos,ball_vel);
+        azul->controle_e_navegacao();
+
+        this->sendCommand(azul_robots,azul->vL,azul->vR);
+    }
+
+
 
     if(ui->habilita_plot->isChecked())
     {
         plot();
     }
+
 }
 
 void MainWindow::updateFPS()
@@ -209,6 +246,29 @@ void MainWindow::limpar_plots()
     ui->plot2->graph(2)->setData((*t_data), (*x1_data));
     ui->plot1->replot();
     ui->plot2->replot();
+}
+
+void MainWindow::sendCommand(QVector<int> index, QVector<double> vL, QVector<double> vR)
+{
+    // A ideia é que vL e vR sejam comandos de -1 a 1
+    SerialComm->write_buf[0]=255;
+    std::cout << "\n===== Comandos de Velocidades =====\n";
+    for(int i=0; i < index.size(); i++)
+    {
+        SerialComm->write_buf[2*index.at(i)-1]=SerialComm->converter_write(int(vL.at(i)*1e2));
+        SerialComm->write_buf[2*index.at(i)]=SerialComm->converter_write(int(vR.at(i)*1e2));
+        QString robotDebugStr = QString("Robo %1  -> vR: %2 vL: %3 ")
+                                                .arg(i)
+                                                .arg(int(vR.at(i)*1e2))
+                                                .arg(int(vL.at(i)*1e2));
+        std::cout << robotDebugStr.toStdString() + '\n';
+    }
+    SerialComm->writeData();
+    std::cout << Text::cyan("[Estratégia] ", true) << Text::bold("Comando foi enviado!") + '\n';
+
+
+
+
 }
 
 void MainWindow::plot()
@@ -427,7 +487,7 @@ void MainWindow::info_ports()
     ui->portas_usb->insertItems(0,SerialComm->list_port);
     ui->status->setText(SerialComm->status);
     //ui->monitor->setText(SerialComm->baund_rate);
-    ui->connect_disconect->setText(SerialComm->button_status);
+    ui->conectar_serial->setText(SerialComm->button_status);
 }
 
 void MainWindow::on_iniciar_clicked()
@@ -447,6 +507,7 @@ void MainWindow::on_iniciar_2_clicked()
 
 void MainWindow::on_conectar_serial_clicked()
 {
+    std::cout << Text::yellow("[Comunicação] ", true) << Text::bold("Porta: " + ui->portas_usb->currentText().toStdString()) + '\n';
     SerialComm->def_port(ui->portas_usb->currentText());
     SerialComm->connectToSerial();
     info_ports();
@@ -455,6 +516,7 @@ void MainWindow::on_conectar_serial_clicked()
 
 void MainWindow::on_atualiza_serial_clicked()
 {
+    std::cout << Text::yellow("[Comunicação] ", true) << Text::bold("Atualiza Portas") + '\n';
     SerialComm->checkSerial();
     ui->portas_usb->clear();
     info_ports();
@@ -489,4 +551,53 @@ void MainWindow::on_time_currentIndexChanged(int index)
     limpar_plots();
 }
 
+
+
+void MainWindow::on_slider_vl_valueChanged(int value)
+{
+    int index = ui->selRobo->currentIndex();
+    if(index == 0)
+    {
+        for(int i = 1; i<10 ;i+=2)
+        {
+            SerialComm->write_buf[i]=SerialComm->converter_write(value);
+        }
+    }
+    else
+    {
+        for(int i = 1; i<10 ;i+=2)
+        {
+            SerialComm->write_buf[i]=0;
+        }
+        SerialComm->write_buf[2*index-1]=SerialComm->converter_write(value);
+    }
+    SerialComm->write_buf[0]=255;
+
+    SerialComm->writeData();
+
+}
+
+
+void MainWindow::on_slider_vr_valueChanged(int value)
+{
+    int index = ui->selRobo->currentIndex();
+    if(index == 0)
+    {
+        for(int i = 2; i<=10 ;i+=2)
+        {
+            SerialComm->write_buf[i]=SerialComm->converter_write(value);
+        }
+    }
+    else
+    {
+        for(int i = 2; i<=10 ;i+=2)
+        {
+            SerialComm->write_buf[i]=0;
+        }
+        SerialComm->write_buf[2*index]=SerialComm->converter_write(value);
+    }
+    SerialComm->write_buf[0]=255;
+
+    SerialComm->writeData();
+}
 

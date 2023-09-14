@@ -6,6 +6,8 @@
 #include <QDebug>
 #include <QStringList>
 #include <string>
+#include <iostream>
+#include <utils/text/text.h>
 //#include <QUsbDevice>
 //#include <QUsbEndpoint>
 

@@ -18,11 +18,14 @@
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QGroupBox>
+#include <QtWidgets/QLCDNumber>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QSlider>
 #include <QtWidgets/QSpacerItem>
+#include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTabWidget>
 #include <QtWidgets/QWidget>
@@ -36,6 +39,36 @@ public:
     QWidget *centralwidget;
     QGridLayout *gridLayout_6;
     QTabWidget *tabWidget;
+    QWidget *tab_3;
+    QGridLayout *gridLayout_27;
+    QComboBox *tipo_plot_2;
+    QGroupBox *groupBox_6;
+    QGridLayout *gridLayout_31;
+    QGridLayout *gridLayout_30;
+    QGridLayout *gridLayout_29;
+    QGridLayout *gridLayout_26;
+    QLabel *label_16;
+    QLCDNumber *leitura_vl;
+    QGridLayout *gridLayout_28;
+    QLabel *label_17;
+    QLCDNumber *leitura_vr;
+    QCheckBox *habilita_leitura;
+    QGroupBox *groupBox_4;
+    QGridLayout *gridLayout_19;
+    QGridLayout *gridLayout_17;
+    QSlider *slider_vl;
+    QLabel *label_7;
+    QLabel *label_9;
+    QSlider *slider_vr;
+    QSpinBox *spin_vl;
+    QSpinBox *spin_vr;
+    QGridLayout *gridLayout_18;
+    QLabel *label_10;
+    QComboBox *selRobo;
+    QCheckBox *habilita_plot_3;
+    QCustomPlot *plot3;
+    QLabel *label_8;
+    QSpacerItem *horizontalSpacer_4;
     QWidget *tab;
     QGridLayout *gridLayout_14;
     QGridLayout *gridLayout_13;
@@ -70,13 +103,13 @@ public:
     QGroupBox *groupBox_2;
     QWidget *layoutWidget;
     QGridLayout *gridLayout_4;
-    QPushButton *iniciar_2;
-    QSpacerItem *horizontalSpacer_2;
     QPushButton *finalizar_2;
-    QLabel *label_2;
-    QSpacerItem *horizontalSpacer_3;
     QLabel *referee_comando;
+    QLabel *label_2;
     QSpacerItem *verticalSpacer;
+    QSpacerItem *horizontalSpacer_2;
+    QPushButton *iniciar_2;
+    QSpacerItem *horizontalSpacer_3;
     QGroupBox *groupBox_3;
     QGridLayout *gridLayout_16;
     QGridLayout *gridLayout_15;
@@ -89,8 +122,6 @@ public:
     QGridLayout *gridLayout_8;
     QGridLayout *gridLayout_7;
     QLabel *status;
-    QLabel *monitor;
-    QLabel *connect_disconect;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -107,6 +138,161 @@ public:
         tabWidget = new QTabWidget(centralwidget);
         tabWidget->setObjectName(QString::fromUtf8("tabWidget"));
         tabWidget->setTabBarAutoHide(false);
+        tab_3 = new QWidget();
+        tab_3->setObjectName(QString::fromUtf8("tab_3"));
+        gridLayout_27 = new QGridLayout(tab_3);
+        gridLayout_27->setObjectName(QString::fromUtf8("gridLayout_27"));
+        tipo_plot_2 = new QComboBox(tab_3);
+        tipo_plot_2->addItem(QString());
+        tipo_plot_2->addItem(QString());
+        tipo_plot_2->addItem(QString());
+        tipo_plot_2->setObjectName(QString::fromUtf8("tipo_plot_2"));
+
+        gridLayout_27->addWidget(tipo_plot_2, 1, 1, 1, 1);
+
+        groupBox_6 = new QGroupBox(tab_3);
+        groupBox_6->setObjectName(QString::fromUtf8("groupBox_6"));
+        gridLayout_31 = new QGridLayout(groupBox_6);
+        gridLayout_31->setObjectName(QString::fromUtf8("gridLayout_31"));
+        gridLayout_30 = new QGridLayout();
+        gridLayout_30->setObjectName(QString::fromUtf8("gridLayout_30"));
+        gridLayout_29 = new QGridLayout();
+        gridLayout_29->setObjectName(QString::fromUtf8("gridLayout_29"));
+        gridLayout_26 = new QGridLayout();
+        gridLayout_26->setObjectName(QString::fromUtf8("gridLayout_26"));
+        label_16 = new QLabel(groupBox_6);
+        label_16->setObjectName(QString::fromUtf8("label_16"));
+
+        gridLayout_26->addWidget(label_16, 0, 0, 1, 1);
+
+        leitura_vl = new QLCDNumber(groupBox_6);
+        leitura_vl->setObjectName(QString::fromUtf8("leitura_vl"));
+
+        gridLayout_26->addWidget(leitura_vl, 0, 1, 1, 1);
+
+
+        gridLayout_29->addLayout(gridLayout_26, 0, 0, 1, 1);
+
+        gridLayout_28 = new QGridLayout();
+        gridLayout_28->setObjectName(QString::fromUtf8("gridLayout_28"));
+        label_17 = new QLabel(groupBox_6);
+        label_17->setObjectName(QString::fromUtf8("label_17"));
+
+        gridLayout_28->addWidget(label_17, 0, 0, 1, 1);
+
+        leitura_vr = new QLCDNumber(groupBox_6);
+        leitura_vr->setObjectName(QString::fromUtf8("leitura_vr"));
+
+        gridLayout_28->addWidget(leitura_vr, 0, 1, 1, 1);
+
+
+        gridLayout_29->addLayout(gridLayout_28, 0, 1, 1, 1);
+
+
+        gridLayout_30->addLayout(gridLayout_29, 0, 0, 1, 1);
+
+        habilita_leitura = new QCheckBox(groupBox_6);
+        habilita_leitura->setObjectName(QString::fromUtf8("habilita_leitura"));
+
+        gridLayout_30->addWidget(habilita_leitura, 1, 0, 1, 1);
+
+
+        gridLayout_31->addLayout(gridLayout_30, 0, 0, 1, 1);
+
+
+        gridLayout_27->addWidget(groupBox_6, 3, 0, 1, 4);
+
+        groupBox_4 = new QGroupBox(tab_3);
+        groupBox_4->setObjectName(QString::fromUtf8("groupBox_4"));
+        gridLayout_19 = new QGridLayout(groupBox_4);
+        gridLayout_19->setObjectName(QString::fromUtf8("gridLayout_19"));
+        gridLayout_17 = new QGridLayout();
+        gridLayout_17->setObjectName(QString::fromUtf8("gridLayout_17"));
+        slider_vl = new QSlider(groupBox_4);
+        slider_vl->setObjectName(QString::fromUtf8("slider_vl"));
+        slider_vl->setMinimum(-100);
+        slider_vl->setMaximum(100);
+        slider_vl->setOrientation(Qt::Horizontal);
+
+        gridLayout_17->addWidget(slider_vl, 0, 1, 1, 1);
+
+        label_7 = new QLabel(groupBox_4);
+        label_7->setObjectName(QString::fromUtf8("label_7"));
+
+        gridLayout_17->addWidget(label_7, 0, 0, 1, 1);
+
+        label_9 = new QLabel(groupBox_4);
+        label_9->setObjectName(QString::fromUtf8("label_9"));
+
+        gridLayout_17->addWidget(label_9, 1, 0, 1, 1);
+
+        slider_vr = new QSlider(groupBox_4);
+        slider_vr->setObjectName(QString::fromUtf8("slider_vr"));
+        slider_vr->setMinimum(-100);
+        slider_vr->setMaximum(100);
+        slider_vr->setOrientation(Qt::Horizontal);
+
+        gridLayout_17->addWidget(slider_vr, 1, 1, 1, 1);
+
+        spin_vl = new QSpinBox(groupBox_4);
+        spin_vl->setObjectName(QString::fromUtf8("spin_vl"));
+        spin_vl->setMinimum(-100);
+        spin_vl->setMaximum(100);
+
+        gridLayout_17->addWidget(spin_vl, 0, 2, 1, 1);
+
+        spin_vr = new QSpinBox(groupBox_4);
+        spin_vr->setObjectName(QString::fromUtf8("spin_vr"));
+        spin_vr->setMinimum(-100);
+        spin_vr->setMaximum(100);
+
+        gridLayout_17->addWidget(spin_vr, 1, 2, 1, 1);
+
+
+        gridLayout_19->addLayout(gridLayout_17, 0, 0, 1, 1);
+
+        gridLayout_18 = new QGridLayout();
+        gridLayout_18->setObjectName(QString::fromUtf8("gridLayout_18"));
+        label_10 = new QLabel(groupBox_4);
+        label_10->setObjectName(QString::fromUtf8("label_10"));
+
+        gridLayout_18->addWidget(label_10, 0, 0, 1, 1);
+
+        selRobo = new QComboBox(groupBox_4);
+        selRobo->addItem(QString());
+        selRobo->addItem(QString());
+        selRobo->addItem(QString());
+        selRobo->addItem(QString());
+        selRobo->setObjectName(QString::fromUtf8("selRobo"));
+
+        gridLayout_18->addWidget(selRobo, 1, 0, 1, 1);
+
+
+        gridLayout_19->addLayout(gridLayout_18, 0, 1, 1, 1);
+
+
+        gridLayout_27->addWidget(groupBox_4, 2, 0, 1, 4);
+
+        habilita_plot_3 = new QCheckBox(tab_3);
+        habilita_plot_3->setObjectName(QString::fromUtf8("habilita_plot_3"));
+
+        gridLayout_27->addWidget(habilita_plot_3, 1, 3, 1, 1);
+
+        plot3 = new QCustomPlot(tab_3);
+        plot3->setObjectName(QString::fromUtf8("plot3"));
+
+        gridLayout_27->addWidget(plot3, 0, 0, 1, 4);
+
+        label_8 = new QLabel(tab_3);
+        label_8->setObjectName(QString::fromUtf8("label_8"));
+
+        gridLayout_27->addWidget(label_8, 1, 0, 1, 1);
+
+        horizontalSpacer_4 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        gridLayout_27->addItem(horizontalSpacer_4, 1, 2, 1, 1);
+
+        tabWidget->addTab(tab_3, QString());
         tab = new QWidget();
         tab->setObjectName(QString::fromUtf8("tab"));
         gridLayout_14 = new QGridLayout(tab);
@@ -261,39 +447,38 @@ public:
         gridLayout_4 = new QGridLayout(layoutWidget);
         gridLayout_4->setObjectName(QString::fromUtf8("gridLayout_4"));
         gridLayout_4->setContentsMargins(0, 0, 0, 0);
-        iniciar_2 = new QPushButton(layoutWidget);
-        iniciar_2->setObjectName(QString::fromUtf8("iniciar_2"));
-
-        gridLayout_4->addWidget(iniciar_2, 0, 0, 1, 2);
-
-        horizontalSpacer_2 = new QSpacerItem(38, 17, QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-        gridLayout_4->addItem(horizontalSpacer_2, 0, 2, 1, 1);
-
         finalizar_2 = new QPushButton(layoutWidget);
         finalizar_2->setObjectName(QString::fromUtf8("finalizar_2"));
 
         gridLayout_4->addWidget(finalizar_2, 0, 3, 1, 2);
+
+        referee_comando = new QLabel(layoutWidget);
+        referee_comando->setObjectName(QString::fromUtf8("referee_comando"));
+        referee_comando->setStyleSheet(QString::fromUtf8(""));
+
+        gridLayout_4->addWidget(referee_comando, 2, 0, 1, 4);
 
         label_2 = new QLabel(layoutWidget);
         label_2->setObjectName(QString::fromUtf8("label_2"));
 
         gridLayout_4->addWidget(label_2, 1, 0, 1, 1);
 
-        horizontalSpacer_3 = new QSpacerItem(119, 17, QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-        gridLayout_4->addItem(horizontalSpacer_3, 1, 1, 1, 4);
-
-        referee_comando = new QLabel(layoutWidget);
-        referee_comando->setObjectName(QString::fromUtf8("referee_comando"));
-        referee_comando->setStyleSheet(QString::fromUtf8("border: 1px solid black;\n"
-"border-radius: 5px;"));
-
-        gridLayout_4->addWidget(referee_comando, 2, 0, 1, 4);
-
         verticalSpacer = new QSpacerItem(17, 37, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
         gridLayout_4->addItem(verticalSpacer, 2, 4, 1, 1);
+
+        horizontalSpacer_2 = new QSpacerItem(38, 17, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        gridLayout_4->addItem(horizontalSpacer_2, 0, 2, 1, 1);
+
+        iniciar_2 = new QPushButton(layoutWidget);
+        iniciar_2->setObjectName(QString::fromUtf8("iniciar_2"));
+
+        gridLayout_4->addWidget(iniciar_2, 0, 0, 1, 2);
+
+        horizontalSpacer_3 = new QSpacerItem(119, 17, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        gridLayout_4->addItem(horizontalSpacer_3, 1, 1, 1, 4);
 
 
         gridLayout_9->addWidget(groupBox_2, 1, 0, 1, 1);
@@ -342,16 +527,6 @@ public:
 
         gridLayout_7->addWidget(status, 0, 0, 1, 1);
 
-        monitor = new QLabel(frame);
-        monitor->setObjectName(QString::fromUtf8("monitor"));
-
-        gridLayout_7->addWidget(monitor, 1, 0, 1, 1);
-
-        connect_disconect = new QLabel(frame);
-        connect_disconect->setObjectName(QString::fromUtf8("connect_disconect"));
-
-        gridLayout_7->addWidget(connect_disconect, 2, 0, 1, 1);
-
 
         gridLayout_8->addLayout(gridLayout_7, 0, 0, 1, 1);
 
@@ -368,6 +543,10 @@ public:
         MainWindow->addDockWidget(Qt::LeftDockWidgetArea, dockWidget);
 
         retranslateUi(MainWindow);
+        QObject::connect(spin_vl, SIGNAL(valueChanged(int)), slider_vl, SLOT(setValue(int)));
+        QObject::connect(spin_vr, SIGNAL(valueChanged(int)), slider_vr, SLOT(setValue(int)));
+        QObject::connect(slider_vl, SIGNAL(valueChanged(int)), spin_vl, SLOT(setValue(int)));
+        QObject::connect(slider_vr, SIGNAL(valueChanged(int)), spin_vr, SLOT(setValue(int)));
 
         tabWidget->setCurrentIndex(0);
 
@@ -378,6 +557,26 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "Lambe Sujo (Client)", nullptr));
+        tipo_plot_2->setItemText(0, QCoreApplication::translate("MainWindow", "VL", nullptr));
+        tipo_plot_2->setItemText(1, QCoreApplication::translate("MainWindow", "VR", nullptr));
+        tipo_plot_2->setItemText(2, QCoreApplication::translate("MainWindow", "Ambos", nullptr));
+
+        groupBox_6->setTitle(QCoreApplication::translate("MainWindow", "Ler velocidades", nullptr));
+        label_16->setText(QCoreApplication::translate("MainWindow", "VL:", nullptr));
+        label_17->setText(QCoreApplication::translate("MainWindow", "VR:", nullptr));
+        habilita_leitura->setText(QCoreApplication::translate("MainWindow", "Ler ", nullptr));
+        groupBox_4->setTitle(QCoreApplication::translate("MainWindow", "Enviar Comandos", nullptr));
+        label_7->setText(QCoreApplication::translate("MainWindow", "VL", nullptr));
+        label_9->setText(QCoreApplication::translate("MainWindow", "VR", nullptr));
+        label_10->setText(QCoreApplication::translate("MainWindow", "Rob\303\264:", nullptr));
+        selRobo->setItemText(0, QCoreApplication::translate("MainWindow", "Todos", nullptr));
+        selRobo->setItemText(1, QCoreApplication::translate("MainWindow", "robo1", nullptr));
+        selRobo->setItemText(2, QCoreApplication::translate("MainWindow", "robo2", nullptr));
+        selRobo->setItemText(3, QCoreApplication::translate("MainWindow", "robo3", nullptr));
+
+        habilita_plot_3->setText(QCoreApplication::translate("MainWindow", "Habilitar Plot", nullptr));
+        label_8->setText(QCoreApplication::translate("MainWindow", "Plot: ", nullptr));
+        tabWidget->setTabText(tabWidget->indexOf(tab_3), QCoreApplication::translate("MainWindow", "Comunica\303\247\303\243o", nullptr));
         label_4->setText(QCoreApplication::translate("MainWindow", "Vari\303\241veis:", nullptr));
         tipos_variaveis->setItemText(0, QCoreApplication::translate("MainWindow", "posi\303\247\303\243o", nullptr));
         tipos_variaveis->setItemText(1, QCoreApplication::translate("MainWindow", "velocidade", nullptr));
@@ -403,17 +602,15 @@ public:
         iniciar->setText(QCoreApplication::translate("MainWindow", "iniciar", nullptr));
         finalizar->setText(QCoreApplication::translate("MainWindow", "finalizar", nullptr));
         groupBox_2->setTitle(QCoreApplication::translate("MainWindow", "Interface com o VSSRefree", nullptr));
-        iniciar_2->setText(QCoreApplication::translate("MainWindow", "iniciar", nullptr));
         finalizar_2->setText(QCoreApplication::translate("MainWindow", "finalizar", nullptr));
-        label_2->setText(QCoreApplication::translate("MainWindow", "Comando:", nullptr));
         referee_comando->setText(QString());
+        label_2->setText(QCoreApplication::translate("MainWindow", "Comando:", nullptr));
+        iniciar_2->setText(QCoreApplication::translate("MainWindow", "iniciar", nullptr));
         groupBox_3->setTitle(QCoreApplication::translate("MainWindow", "Comunica\303\247\303\243o Serial", nullptr));
         conectar_serial->setText(QCoreApplication::translate("MainWindow", "Conectar", nullptr));
         label_3->setText(QCoreApplication::translate("MainWindow", "Porta:", nullptr));
         atualiza_serial->setText(QCoreApplication::translate("MainWindow", "Refresh", nullptr));
         status->setText(QString());
-        monitor->setText(QString());
-        connect_disconect->setText(QString());
     } // retranslateUi
 
 };

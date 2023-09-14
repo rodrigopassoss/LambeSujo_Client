@@ -27,6 +27,222 @@
       <property name="tabBarAutoHide">
        <bool>false</bool>
       </property>
+      <widget class="QWidget" name="tab_3">
+       <attribute name="title">
+        <string>Comunicação</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_27">
+        <item row="1" column="1">
+         <widget class="QComboBox" name="tipo_plot_2">
+          <item>
+           <property name="text">
+            <string>VL</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>VR</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Ambos</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="3" column="0" colspan="4">
+         <widget class="QGroupBox" name="groupBox_6">
+          <property name="title">
+           <string>Ler velocidades</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_31">
+           <item row="0" column="0">
+            <layout class="QGridLayout" name="gridLayout_30">
+             <item row="0" column="0">
+              <layout class="QGridLayout" name="gridLayout_29">
+               <item row="0" column="0">
+                <layout class="QGridLayout" name="gridLayout_26">
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_16">
+                   <property name="text">
+                    <string>VL:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QLCDNumber" name="leitura_vl"/>
+                 </item>
+                </layout>
+               </item>
+               <item row="0" column="1">
+                <layout class="QGridLayout" name="gridLayout_28">
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_17">
+                   <property name="text">
+                    <string>VR:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QLCDNumber" name="leitura_vr"/>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+             <item row="1" column="0">
+              <widget class="QCheckBox" name="habilita_leitura">
+               <property name="text">
+                <string>Ler </string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="2" column="0" colspan="4">
+         <widget class="QGroupBox" name="groupBox_4">
+          <property name="title">
+           <string>Enviar Comandos</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_19">
+           <item row="0" column="0">
+            <layout class="QGridLayout" name="gridLayout_17">
+             <item row="0" column="1">
+              <widget class="QSlider" name="slider_vl">
+               <property name="minimum">
+                <number>-100</number>
+               </property>
+               <property name="maximum">
+                <number>100</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_7">
+               <property name="text">
+                <string>VL</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_9">
+               <property name="text">
+                <string>VR</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QSlider" name="slider_vr">
+               <property name="minimum">
+                <number>-100</number>
+               </property>
+               <property name="maximum">
+                <number>100</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QSpinBox" name="spin_vl">
+               <property name="minimum">
+                <number>-100</number>
+               </property>
+               <property name="maximum">
+                <number>100</number>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="2">
+              <widget class="QSpinBox" name="spin_vr">
+               <property name="minimum">
+                <number>-100</number>
+               </property>
+               <property name="maximum">
+                <number>100</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="0" column="1">
+            <layout class="QGridLayout" name="gridLayout_18">
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_10">
+               <property name="text">
+                <string>Robô:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QComboBox" name="selRobo">
+               <item>
+                <property name="text">
+                 <string>Todos</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>robo1</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>robo2</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>robo3</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="QCheckBox" name="habilita_plot_3">
+          <property name="text">
+           <string>Habilitar Plot</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" colspan="4">
+         <widget class="QCustomPlot" name="plot3" native="true"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_8">
+          <property name="text">
+           <string>Plot: </string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <spacer name="horizontalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
       <widget class="QWidget" name="tab">
        <attribute name="title">
         <string>Plots</string>
@@ -250,12 +466,42 @@
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_4">
-         <item row="0" column="0" colspan="2">
-          <widget class="QPushButton" name="iniciar_2">
+         <item row="0" column="3" colspan="2">
+          <widget class="QPushButton" name="finalizar_2">
            <property name="text">
-            <string>iniciar</string>
+            <string>finalizar</string>
            </property>
           </widget>
+         </item>
+         <item row="2" column="0" colspan="4">
+          <widget class="QLabel" name="referee_comando">
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Comando:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="4">
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>17</width>
+             <height>37</height>
+            </size>
+           </property>
+          </spacer>
          </item>
          <item row="0" column="2">
           <spacer name="horizontalSpacer_2">
@@ -270,17 +516,10 @@
            </property>
           </spacer>
          </item>
-         <item row="0" column="3" colspan="2">
-          <widget class="QPushButton" name="finalizar_2">
+         <item row="0" column="0" colspan="2">
+          <widget class="QPushButton" name="iniciar_2">
            <property name="text">
-            <string>finalizar</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>Comando:</string>
+            <string>iniciar</string>
            </property>
           </widget>
          </item>
@@ -293,30 +532,6 @@
             <size>
              <width>119</width>
              <height>17</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="2" column="0" colspan="4">
-          <widget class="QLabel" name="referee_comando">
-           <property name="styleSheet">
-            <string notr="true">border: 1px solid black;
-border-radius: 5px;</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="4">
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>17</width>
-             <height>37</height>
             </size>
            </property>
           </spacer>
@@ -379,20 +594,6 @@ border-radius: 5px;</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
-                <widget class="QLabel" name="monitor">
-                 <property name="text">
-                  <string/>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="connect_disconect">
-                 <property name="text">
-                  <string/>
-                 </property>
-                </widget>
-               </item>
               </layout>
              </item>
             </layout>
@@ -418,5 +619,70 @@ border-radius: 5px;</string>
  <resources>
   <include location="recurso.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>spin_vl</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>slider_vl</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>532</x>
+     <y>261</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>411</x>
+     <y>261</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spin_vr</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>slider_vr</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>526</x>
+     <y>294</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>405</x>
+     <y>294</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider_vl</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spin_vl</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>405</x>
+     <y>261</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>526</x>
+     <y>261</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider_vr</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spin_vr</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>405</x>
+     <y>294</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>526</x>
+     <y>294</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

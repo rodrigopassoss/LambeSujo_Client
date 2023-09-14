@@ -33,6 +33,7 @@ system(echo "Compiling protobuf files" && cd proto && protoc --cpp_out=./ *.prot
 SOURCES += \
     Communication.cpp \
     constants/constants.cpp \
+    estrategia.cpp \
     filters/kalman/kalmanfilter.cpp \
     filters/kalman/matrix/matrix.cpp \
     filters/kalman/state/kalmanstate.cpp \
@@ -67,6 +68,7 @@ SOURCES += \
 HEADERS += \
     Communication.h \
     constants/constants.h \
+    estrategia.h \
     filters/kalman/kalmanfilter.h \
     filters/kalman/matrix/matrix.h \
     filters/kalman/state/kalmanstate.h \
