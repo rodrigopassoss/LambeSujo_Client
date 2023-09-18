@@ -50,6 +50,24 @@ MainWindow::MainWindow(QWidget *parent)
    amarelo = new estrategia(VSSRef::YELLOW);
    time_estrategia = VSSRef::YELLOW; //Configurável via interface
 
+   //Atuliza menu da estratégia
+   for(int i=0;i<amarelo->obter_estrategias().size();i++)
+   {
+       ui->sel_estrategia->addItem(amarelo->obter_estrategias().at(i));
+   }
+   for(int i=0;i<amarelo->obter_atacantes().size();i++)
+   {
+       ui->sel_atacante->addItem(amarelo->obter_atacantes().at(i));
+   }
+   for(int i=0;i<amarelo->obter_zagueiros().size();i++)
+   {
+       ui->sel_zagueiro->addItem(amarelo->obter_zagueiros().at(i));
+   }
+   for(int i=0;i<amarelo->obter_goleiros().size();i++)
+   {
+       ui->sel_goleiro->addItem(amarelo->obter_goleiros().at(i));
+   }
+
 
 }
 
@@ -252,7 +270,7 @@ void MainWindow::sendCommand(QVector<int> index, QVector<double> vL, QVector<dou
 {
     // A ideia é que vL e vR sejam comandos de -1 a 1
     SerialComm->write_buf[0]=255;
-    std::cout << "\n===== Comandos de Velocidades =====\n";
+    std::cout << "\n===== VELOCITIES =====\n";
     for(int i=0; i < index.size(); i++)
     {
         SerialComm->write_buf[2*index.at(i)-1]=SerialComm->converter_write(int(vL.at(i)*1e2));
@@ -264,7 +282,7 @@ void MainWindow::sendCommand(QVector<int> index, QVector<double> vL, QVector<dou
         std::cout << robotDebugStr.toStdString() + '\n';
     }
     SerialComm->writeData();
-    std::cout << Text::cyan("[Estratégia] ", true) << Text::bold("Comando foi enviado!") + '\n';
+    //std::cout << Text::cyan("[Estratégia] ", true) << Text::bold("Comando foi enviado!") + '\n';
 
 
 
@@ -599,5 +617,26 @@ void MainWindow::on_slider_vr_valueChanged(int value)
     SerialComm->write_buf[0]=255;
 
     SerialComm->writeData();
+}
+
+
+void MainWindow::on_finalizar_clicked()
+{
+    disconnect(cronometro,SIGNAL(timeout()),visionClient,SLOT(loop()));
+
+    QVector<int> indices;
+    QVector<double> zeros;
+    for(int i=0;i<3;i++)
+    {
+        zeros.insert(i,0);
+        indices.insert(i,i);
+    }
+    this->sendCommand(indices,zeros,zeros);
+}
+
+
+void MainWindow::on_finalizar_2_clicked()
+{
+    disconnect(cronometro,SIGNAL(timeout()),refereeClient,SLOT(runClient()));
 }
 

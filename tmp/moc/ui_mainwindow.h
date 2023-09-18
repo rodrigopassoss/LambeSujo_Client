@@ -86,6 +86,34 @@ public:
     QCheckBox *habilita_plot;
     QCheckBox *salvar_em_txt;
     QWidget *tab_2;
+    QGridLayout *gridLayout_35;
+    QGroupBox *groupBox_5;
+    QGridLayout *gridLayout_34;
+    QGridLayout *gridLayout_33;
+    QGridLayout *gridLayout_32;
+    QGridLayout *gridLayout_25;
+    QGridLayout *gridLayout_22;
+    QLabel *label_12;
+    QComboBox *sel_estrategia;
+    QSpacerItem *horizontalSpacer_9;
+    QFrame *line;
+    QGridLayout *gridLayout_21;
+    QLabel *label_13;
+    QComboBox *sel_atacante;
+    QLabel *label_14;
+    QComboBox *sel_zagueiro;
+    QLabel *label_15;
+    QComboBox *sel_goleiro;
+    QSpacerItem *horizontalSpacer_5;
+    QFrame *line_2;
+    QGridLayout *gridLayout_24;
+    QPushButton *iniciar_3;
+    QPushButton *finalizar_3;
+    QSpacerItem *horizontalSpacer_8;
+    QGridLayout *gridLayout_20;
+    QLabel *label_11;
+    QComboBox *comboBox;
+    QSpacerItem *horizontalSpacer_7;
     QMenuBar *menubar;
     QStatusBar *statusbar;
     QDockWidget *dockWidget;
@@ -379,6 +407,142 @@ public:
         tabWidget->addTab(tab, QString());
         tab_2 = new QWidget();
         tab_2->setObjectName(QString::fromUtf8("tab_2"));
+        gridLayout_35 = new QGridLayout(tab_2);
+        gridLayout_35->setObjectName(QString::fromUtf8("gridLayout_35"));
+        groupBox_5 = new QGroupBox(tab_2);
+        groupBox_5->setObjectName(QString::fromUtf8("groupBox_5"));
+        gridLayout_34 = new QGridLayout(groupBox_5);
+        gridLayout_34->setObjectName(QString::fromUtf8("gridLayout_34"));
+        gridLayout_33 = new QGridLayout();
+        gridLayout_33->setObjectName(QString::fromUtf8("gridLayout_33"));
+        gridLayout_32 = new QGridLayout();
+        gridLayout_32->setObjectName(QString::fromUtf8("gridLayout_32"));
+        gridLayout_25 = new QGridLayout();
+        gridLayout_25->setObjectName(QString::fromUtf8("gridLayout_25"));
+        gridLayout_22 = new QGridLayout();
+        gridLayout_22->setObjectName(QString::fromUtf8("gridLayout_22"));
+        label_12 = new QLabel(groupBox_5);
+        label_12->setObjectName(QString::fromUtf8("label_12"));
+
+        gridLayout_22->addWidget(label_12, 0, 0, 1, 1);
+
+        sel_estrategia = new QComboBox(groupBox_5);
+        sel_estrategia->setObjectName(QString::fromUtf8("sel_estrategia"));
+
+        gridLayout_22->addWidget(sel_estrategia, 0, 1, 1, 1);
+
+        horizontalSpacer_9 = new QSpacerItem(186, 17, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        gridLayout_22->addItem(horizontalSpacer_9, 1, 1, 1, 1);
+
+
+        gridLayout_25->addLayout(gridLayout_22, 0, 0, 1, 1);
+
+        line = new QFrame(groupBox_5);
+        line->setObjectName(QString::fromUtf8("line"));
+        line->setFrameShape(QFrame::HLine);
+        line->setFrameShadow(QFrame::Sunken);
+
+        gridLayout_25->addWidget(line, 1, 0, 1, 1);
+
+
+        gridLayout_32->addLayout(gridLayout_25, 0, 0, 1, 1);
+
+        gridLayout_21 = new QGridLayout();
+        gridLayout_21->setObjectName(QString::fromUtf8("gridLayout_21"));
+        label_13 = new QLabel(groupBox_5);
+        label_13->setObjectName(QString::fromUtf8("label_13"));
+
+        gridLayout_21->addWidget(label_13, 0, 0, 1, 1);
+
+        sel_atacante = new QComboBox(groupBox_5);
+        sel_atacante->setObjectName(QString::fromUtf8("sel_atacante"));
+
+        gridLayout_21->addWidget(sel_atacante, 0, 1, 1, 1);
+
+        label_14 = new QLabel(groupBox_5);
+        label_14->setObjectName(QString::fromUtf8("label_14"));
+
+        gridLayout_21->addWidget(label_14, 1, 0, 1, 1);
+
+        sel_zagueiro = new QComboBox(groupBox_5);
+        sel_zagueiro->setObjectName(QString::fromUtf8("sel_zagueiro"));
+
+        gridLayout_21->addWidget(sel_zagueiro, 1, 1, 1, 1);
+
+        label_15 = new QLabel(groupBox_5);
+        label_15->setObjectName(QString::fromUtf8("label_15"));
+
+        gridLayout_21->addWidget(label_15, 2, 0, 1, 1);
+
+        sel_goleiro = new QComboBox(groupBox_5);
+        sel_goleiro->setObjectName(QString::fromUtf8("sel_goleiro"));
+
+        gridLayout_21->addWidget(sel_goleiro, 2, 1, 1, 1);
+
+        horizontalSpacer_5 = new QSpacerItem(186, 17, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        gridLayout_21->addItem(horizontalSpacer_5, 3, 1, 1, 1);
+
+
+        gridLayout_32->addLayout(gridLayout_21, 1, 0, 1, 1);
+
+
+        gridLayout_33->addLayout(gridLayout_32, 0, 0, 1, 1);
+
+        line_2 = new QFrame(groupBox_5);
+        line_2->setObjectName(QString::fromUtf8("line_2"));
+        line_2->setFrameShape(QFrame::HLine);
+        line_2->setFrameShadow(QFrame::Sunken);
+
+        gridLayout_33->addWidget(line_2, 1, 0, 1, 1);
+
+        gridLayout_24 = new QGridLayout();
+        gridLayout_24->setObjectName(QString::fromUtf8("gridLayout_24"));
+        iniciar_3 = new QPushButton(groupBox_5);
+        iniciar_3->setObjectName(QString::fromUtf8("iniciar_3"));
+
+        gridLayout_24->addWidget(iniciar_3, 0, 0, 1, 1);
+
+        finalizar_3 = new QPushButton(groupBox_5);
+        finalizar_3->setObjectName(QString::fromUtf8("finalizar_3"));
+
+        gridLayout_24->addWidget(finalizar_3, 0, 1, 1, 1);
+
+        horizontalSpacer_8 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        gridLayout_24->addItem(horizontalSpacer_8, 0, 2, 1, 1);
+
+        gridLayout_20 = new QGridLayout();
+        gridLayout_20->setObjectName(QString::fromUtf8("gridLayout_20"));
+        label_11 = new QLabel(groupBox_5);
+        label_11->setObjectName(QString::fromUtf8("label_11"));
+
+        gridLayout_20->addWidget(label_11, 0, 0, 1, 1);
+
+        comboBox = new QComboBox(groupBox_5);
+        comboBox->addItem(QString());
+        comboBox->addItem(QString());
+        comboBox->setObjectName(QString::fromUtf8("comboBox"));
+
+        gridLayout_20->addWidget(comboBox, 0, 1, 1, 1);
+
+        horizontalSpacer_7 = new QSpacerItem(183, 14, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        gridLayout_20->addItem(horizontalSpacer_7, 1, 1, 1, 1);
+
+
+        gridLayout_24->addLayout(gridLayout_20, 1, 0, 1, 3);
+
+
+        gridLayout_33->addLayout(gridLayout_24, 2, 0, 1, 1);
+
+
+        gridLayout_34->addLayout(gridLayout_33, 0, 0, 1, 1);
+
+
+        gridLayout_35->addWidget(groupBox_5, 0, 0, 1, 1);
+
         tabWidget->addTab(tab_2, QString());
 
         gridLayout_6->addWidget(tabWidget, 0, 0, 1, 1);
@@ -548,7 +712,7 @@ public:
         QObject::connect(slider_vl, SIGNAL(valueChanged(int)), spin_vl, SLOT(setValue(int)));
         QObject::connect(slider_vr, SIGNAL(valueChanged(int)), spin_vr, SLOT(setValue(int)));
 
-        tabWidget->setCurrentIndex(0);
+        tabWidget->setCurrentIndex(2);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -595,6 +759,17 @@ public:
         habilita_plot->setText(QCoreApplication::translate("MainWindow", "Habilita Plot", nullptr));
         salvar_em_txt->setText(QCoreApplication::translate("MainWindow", "Salvar experimento em txt", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tab), QCoreApplication::translate("MainWindow", "Plots", nullptr));
+        groupBox_5->setTitle(QCoreApplication::translate("MainWindow", "Menu ", nullptr));
+        label_12->setText(QCoreApplication::translate("MainWindow", "Estrat\303\251gia:", nullptr));
+        label_13->setText(QCoreApplication::translate("MainWindow", "Atacante:", nullptr));
+        label_14->setText(QCoreApplication::translate("MainWindow", "Zagueiro:", nullptr));
+        label_15->setText(QCoreApplication::translate("MainWindow", "Goleiro:", nullptr));
+        iniciar_3->setText(QCoreApplication::translate("MainWindow", "iniciar", nullptr));
+        finalizar_3->setText(QCoreApplication::translate("MainWindow", "Finalizar", nullptr));
+        label_11->setText(QCoreApplication::translate("MainWindow", "Nosso time:", nullptr));
+        comboBox->setItemText(0, QCoreApplication::translate("MainWindow", "azul", nullptr));
+        comboBox->setItemText(1, QCoreApplication::translate("MainWindow", "amarelo", nullptr));
+
         tabWidget->setTabText(tabWidget->indexOf(tab_2), QCoreApplication::translate("MainWindow", "Estrat\303\251gia", nullptr));
         groupBox->setTitle(QCoreApplication::translate("MainWindow", "Interface com o vss-vision", nullptr));
         fps_medidor->setText(QString());

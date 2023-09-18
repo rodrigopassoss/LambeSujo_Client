@@ -96,6 +96,10 @@ private slots:
 
     void on_slider_vr_valueChanged(int value);
 
+    void on_finalizar_clicked();
+
+    void on_finalizar_2_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

@@ -33,7 +33,7 @@ estrategia::estrategia(int time)
 void estrategia::controle_e_navegacao()
 {
     // Bola como Ponto de destino
-    double x_des = this->ball_pos.x();
+  /*double x_des = this->ball_pos.x();
     double y_des = this->ball_pos.y();
 
     //Distância do Robô 0 para o destino
@@ -74,6 +74,15 @@ void estrategia::controle_e_navegacao()
     vL.insert(0,((V+W*L)/R)/vrMax);
     //vR.insert(0,(V-W));
     //vL.insert(0,(V+W));
+  */
+    vai_para(0, this->ball_pos.x(), this->ball_pos.y());
+
+    // Zera as velocidades dos outros robôs
+    for(int i=1;i<qtdRobos;i++)
+    {
+        this->vL.insert(i,0);
+        this->vR.insert(i,0);
+    }
 }
 
 void estrategia::atualiza_posicoes(QVector<int> _indice, Position *_rblue_pos, double *_rblue_ori, Velocity *_rblue_vel,
@@ -107,6 +116,86 @@ void estrategia::atualiza_posicoes(QVector<int> _indice, Position *_rblue_pos, d
     }
     this->ball_pos = _ball_pos;
     this->ball_vel = _ball_vel;
+}
+
+void estrategia::vai_para(int id, float x_des, float y_des)
+{
+    //Calculos dos erros
+    float d = sqrt(pow(x_des-meu_time_pos[id].x(),2)+pow(y_des-meu_time_pos[id].y(),2));
+    std::cout << "Distância: "<< d << "\n";
+        angle_err err = olhar(id,x_des,y_des);
+    std::cout << "Erro angular: "<< err.fi << "\n";
+
+    //constantes do controle
+    float kv = 2.1; float kw = 1.57;
+    //Controle linear
+    float V = Vmax*tanh(kv*d*err.flag);
+    //Controle angular
+    //float W = Wmax*tanh(kw*(cos(theta_e)>=0?theta_e:(theta_e<0?(-M_PI)-theta_e:M_PI-theta_e)));
+    float W = Wmax*tanh(kw*err.fi);
+
+    //Calculo das Velocidas das Rodas
+    std::cout << "V: "<< V << "\n";
+    std::cout << "W: "<< W << "\n";
+
+    float v_R = ((V-W*L)/R)/vrMax;
+    float v_L = ((V+W*L)/R)/vrMax;
+    vR.insert(id,fabs(v_R) > 1 ? v_R/fabs(v_R) : v_R);
+    vL.insert(id,fabs(v_L) > 1 ? v_L/fabs(v_L) : v_L);
+}
+
+angle_err estrategia::olhar(int id, float x_des, float y_des)
+{
+    float theta_e = atan2(meu_time_pos[id].y()-y_des,
+                          meu_time_pos[id].x()-x_des)-meu_time_ori[id];
+    int sentido = -1;
+    if(abs(theta_e)>(M_PI/2.0))
+    {
+        theta_e = atan2(meu_time_pos[id].y()-y_des,
+                        meu_time_pos[id].x()-x_des)-(meu_time_ori[id]+M_PI);
+        sentido = 1;
+    }
+    // Coloca o erro de -Pi a Pi para "tirar" a discontinuidade
+    if(theta_e>M_PI)
+    {
+        theta_e = theta_e - 2*M_PI;
+    }
+    else if(theta_e<-M_PI)
+    {
+        theta_e = theta_e + 2*M_PI;
+    };
+    angle_err err;
+    err.fi = theta_e;
+    err.flag = sentido;
+    return err;
+}
+
+QList<QString> estrategia::obter_estrategias()
+{
+    QList<QString> aux;
+    aux.insert(0,QString("PARADOS"));
+    return aux;
+}
+
+QList<QString> estrategia::obter_atacantes()
+{
+    QList<QString> aux;
+    aux.insert(0,QString("PARADO"));
+    return aux;
+}
+
+QList<QString> estrategia::obter_zagueiros()
+{
+    QList<QString> aux;
+    aux.insert(0,QString("PARADO"));
+    return aux;
+}
+
+QList<QString> estrategia::obter_goleiros()
+{
+    QList<QString> aux;
+    aux.insert(0,QString("PARADO"));
+    return aux;
 }
 
 
