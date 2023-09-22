@@ -63,7 +63,7 @@ public:
     double fps, start, fim;
 
     //Função para enviar comandos para as rodas
-    void sendCommand(QVector<int> index,QVector<double> vL, QVector<double> vR);
+    void sendCommand(QVector<int> index,float vL[], float vR[]);
 
     //Estratégia
     int time_estrategia;

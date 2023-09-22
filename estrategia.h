@@ -8,7 +8,11 @@
 #include <QList>
 
 enum comandos {PARADOS=0};
-enum tipo_de_estrategia {PARADO=0, VAI_PARA};
+enum atacante {PARADO=0, VAI_PARA=1,ATACANTE_01=2};
+enum zagueiro {ZAGUEIRO_01=1};
+enum goleiro {GOLEIRO_01=1};
+enum time {AMARELO=-1,AZUL=1};
+
 
 struct _angle_
 {
@@ -32,17 +36,42 @@ private:
 public:
     estrategia(int time);
 
+    //Métodos Gerais
     void controle_e_navegacao();
     void atualiza_posicoes(QVector<int> _indice, Position *_rblue_pos, double *_rblue_ori,Velocity *_rblue_vel,
                            Position *_ryellow_pos, double *_ryellow_ori,Velocity *_ryellow_vel,
                            Position _ball_pos, Velocity _ball_vel);
+
+    //Controle de Movimento
     void vai_para(int id, float x, float y);
+    void posicionamento(int id, float x, float y); // vai_para + desvio de obstáculo
+    void posicionamento2(int id, float x, float y); // esse desvia da bola e do nosso time tbm
+    void andarFrente(int id,int vel);
+    void girar(int id,int vel);
+
+
+    //Métodos Auxiliares
     angle_err olhar(int id, float x, float y);
+    float distancia(float x1, float y1, float x2, float y2);
+    float menor_distancia(float x,float y);
+    float menor_distancia2(int id, float x,float y); // distancias para os membros do próprio time
+    int sgn(float valor);
+    float diff_angular(float ang1, float ang2);
+    void calc_repulsao(int id, float F[]);
+    void calc_repulsao2(int id, float F[],bool flag);  // calculo de repulsao para o posicionamento2
+    void converte_vetor(float V[],float raio);
+    void saturacao(float _pos[]);
+    bool passagem_limpa(int id,float x_des, float y_des);
+
+
+    //Jogadores
+    void atacante_01(int id, int _time); bool flag_atacante1; bool flag_atacante2; bool flag_atacante3;
+    void goleiro_01(int id, int _time, float x = -0.7, float topl = 0.17);
 
     //Velocidades das rodas de cada robô
     QVector<int> indice;
-    QVector<double> vL;
-    QVector<double> vR;
+    float vL[3];
+    float vR[3];
 
     //Função que retorna uma Lista com os nomes das estratégias disponiveis
     QList<QString> obter_estrategias();

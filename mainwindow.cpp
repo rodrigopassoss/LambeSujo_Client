@@ -266,19 +266,19 @@ void MainWindow::limpar_plots()
     ui->plot2->replot();
 }
 
-void MainWindow::sendCommand(QVector<int> index, QVector<double> vL, QVector<double> vR)
+void MainWindow::sendCommand(QVector<int> index, float vL[], float vR[])
 {
     // A ideia é que vL e vR sejam comandos de -1 a 1
     SerialComm->write_buf[0]=255;
     std::cout << "\n===== VELOCITIES =====\n";
     for(int i=0; i < index.size(); i++)
     {
-        SerialComm->write_buf[2*index.at(i)-1]=SerialComm->converter_write(int(vL.at(i)*1e2));
-        SerialComm->write_buf[2*index.at(i)]=SerialComm->converter_write(int(vR.at(i)*1e2));
+        SerialComm->write_buf[2*index.at(i)-1]=SerialComm->converter_write(int(vL[i]*1e2));
+        SerialComm->write_buf[2*index.at(i)]=SerialComm->converter_write(int(vR[i]*1e2));
         QString robotDebugStr = QString("Robo %1  -> vR: %2 vL: %3 ")
                                                 .arg(i)
-                                                .arg(int(vR.at(i)*1e2))
-                                                .arg(int(vL.at(i)*1e2));
+                                                .arg(int(vR[i]*1e2))
+                                                .arg(int(vL[i]*1e2));
         std::cout << robotDebugStr.toStdString() + '\n';
     }
     SerialComm->writeData();
@@ -625,10 +625,10 @@ void MainWindow::on_finalizar_clicked()
     disconnect(cronometro,SIGNAL(timeout()),visionClient,SLOT(loop()));
 
     QVector<int> indices;
-    QVector<double> zeros;
+    float zeros[3];
     for(int i=0;i<3;i++)
     {
-        zeros.insert(i,0);
+        zeros[i];
         indices.insert(i,i);
     }
     this->sendCommand(indices,zeros,zeros);
