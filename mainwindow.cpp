@@ -640,3 +640,32 @@ void MainWindow::on_finalizar_2_clicked()
     disconnect(cronometro,SIGNAL(timeout()),refereeClient,SLOT(runClient()));
 }
 
+
+void MainWindow::on_iniciar_3_clicked()
+{
+    azul->sel_atacante = ui->sel_atacante->currentIndex();
+    azul->sel_zagueiro = ui->sel_zagueiro->currentIndex();
+    azul->sel_goleiro = ui->sel_goleiro->currentIndex();
+    azul->sel_estrategia = ui->sel_estrategia->currentIndex();
+
+    amarelo->sel_atacante = ui->sel_atacante->currentIndex();
+    amarelo->sel_zagueiro = ui->sel_zagueiro->currentIndex();
+    amarelo->sel_goleiro = ui->sel_goleiro->currentIndex();
+    amarelo->sel_estrategia = ui->sel_estrategia->currentIndex();
+}
+
+
+void MainWindow::on_finalizar_3_clicked()
+{
+    disconnect(cronometro,SIGNAL(timeout()),visionClient,SLOT(loop()));
+
+    QVector<int> indices;
+    float zeros[3];
+    for(int i=0;i<3;i++)
+    {
+        zeros[i];
+        indices.insert(i,i);
+    }
+    this->sendCommand(indices,zeros,zeros);
+}
+

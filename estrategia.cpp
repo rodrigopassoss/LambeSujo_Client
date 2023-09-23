@@ -22,6 +22,10 @@ estrategia::estrategia(int time)
 
     flag_atacante1 = true; flag_atacante2 = false; flag_atacante3 = true;
 
+    //Flags de seleção dos jogadores e estratégia
+    sel_atacante = PARADO; sel_zagueiro = PARADO; sel_goleiro = PARADO;
+    sel_estrategia  = PARADOS;
+
 
     if(time==VSSRef::BLUE)
     {
@@ -36,7 +40,11 @@ estrategia::estrategia(int time)
 void estrategia::controle_e_navegacao()
 {
 
+
     vai_para(0, this->ball_pos.x(), this->ball_pos.y());
+    atacante_01(0,AMARELO);
+
+   // estrategias(sel_estrategia);
 
 }
 
@@ -214,8 +222,8 @@ void estrategia::posicionamento2(int id, float x_des, float y_des)
     float ka = 1;
     float kr = 1;
 
-    converte_vetor(V,0.2);
-    converte_vetor(F,0.2);
+    converte_vetor(V,0.3);
+    converte_vetor(F,0.3);
 
     float new_des[] = {(meu_time_pos[id].x() + ka*V[0] + kr*F[0]), (meu_time_pos[id].y() + ka*V[1] + kr*F[1])};
 
@@ -375,16 +383,16 @@ void estrategia::atacante_01(int id, int _time)
         flag_atacante1 = false;
 
 
-    float d_bg = distancia(x_goal,y_goal,ball_pos.x(),ball_pos.x());
-    float vec[] = {(x_goal - ball_pos.x())/d_bg,(y_goal - ball_pos.x())/d_bg};
-    float passo1 = 0.15; float passo2 = 0.15; float delta = 0.1;
+    float d_bg = distancia(x_goal,y_goal,ball_pos.x(),ball_pos.y());
+    float vec[] = {(x_goal - ball_pos.x())/d_bg,(y_goal - ball_pos.y())/d_bg};
+    float passo1 = 0.15; float passo2 = 0.1; float delta = 0.07;
 
-    float d_ball = distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),ball_pos.x(),ball_pos.x());
+    float d_ball = distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),ball_pos.x(),ball_pos.y());
     if( (d_ball > (passo2+delta)) || flag_atacante3 )
     {
 
         x_des = -vec[0]*passo2 + ball_pos.x();
-        y_des = -vec[1]*passo2 + ball_pos.x();
+        y_des = -vec[1]*passo2 + ball_pos.y();
 
         //---Saturação
         if(fabs(x_des)>0.72)
@@ -410,7 +418,7 @@ void estrategia::atacante_01(int id, int _time)
     else if((d_ball < delta))
     {
         x_des = vec[0]*passo1 + ball_pos.x();
-        y_des = vec[1]*passo1 + ball_pos.x();
+        y_des = vec[1]*passo1 + ball_pos.y();
         vai_para(id,x_des,y_des);
         flag_atacante2 = true;
         std::cout << "Conduzindo a bola!" << "\n";
@@ -418,7 +426,7 @@ void estrategia::atacante_01(int id, int _time)
     else
     {
         x_des = ball_pos.x();
-        y_des = ball_pos.x();
+        y_des = ball_pos.y();
         vai_para(id,x_des,y_des);
         if (x_des*_time < meu_time_pos[id].x()*_time)
             flag_atacante3 = true;
@@ -491,14 +499,95 @@ void estrategia::goleiro_01(int id, int _time, float x_, float topl)
     }
 }
 
+void estrategia::estrategias(int t_estrategia)
+{
+    if(t_estrategia==PARADOS)
+    {
+        atacantes(PARADO);
+        zagueiros(PARADO);
+        goleiros(PARADO);
+    }
+    else if(t_estrategia==DEFAULT)
+    {
+        atacantes(sel_atacante);
+        goleiros(sel_goleiro);
+        zagueiros(sel_zagueiro);
+    }
+}
 
+void estrategia::atacantes(int t_atacante)
+{
+    switch (t_atacante) {
+    case ATACANTE_01:
+        if(nossaCor==VSSRef::YELLOW)
+            atacante_01(id_atacante,AMARELO);
+        else
+            atacante_01(id_atacante,AZUL);
+        break;
+    case VAI_PARA:
+        vai_para(id_atacante,this->ball_pos.x(),this->ball_pos.y());
+        break;
+    case PARADO:
+        for(int i=0;i<qtdRobos;i++)
+        {
+            this->vL[i]=0;
+            this->vR[i]=0;
+        }
+        break;
+    default:
+        break;
+    }
 
+}
+
+void estrategia::zagueiros(int t_zagueiro)
+{
+    switch (t_zagueiro) {
+    case PARADO:
+        for(int i=0;i<qtdRobos;i++)
+        {
+            this->vL[i]=0;
+            this->vR[i]=0;
+        }
+        break;
+    case VAI_PARA:
+        vai_para(id_zagueiro,this->ball_pos.x(),this->ball_pos.y());
+        break;
+    default:
+        break;
+    }
+}
+
+void estrategia::goleiros(int t_goleiro)
+{
+    switch (t_goleiro) {
+    case GOLEIRO_01:
+        if(nossaCor==VSSRef::YELLOW)
+            goleiro_01(id_goleiro,AZUL);  //está trocado só para testes
+        else
+            goleiro_01(id_goleiro,AMARELO);
+        break;
+    case VAI_PARA:
+        vai_para(id_goleiro,this->ball_pos.x(),this->ball_pos.y());
+        break;
+    case PARADO:
+        for(int i=0;i<qtdRobos;i++)
+        {
+            this->vL[i]=0;
+            this->vR[i]=0;
+        }
+        break;
+    default:
+        break;
+    }
+}
 
 
 QList<QString> estrategia::obter_estrategias()
 {
     QList<QString> aux;
     aux.insert(0,QString("PARADOS"));
+    aux.insert(1,QString("DEFAULT"));
     return aux;
 }
 
@@ -515,6 +604,7 @@ QList<QString> estrategia::obter_zagueiros()
 {
     QList<QString> aux;
     aux.insert(0,QString("PARADO"));
+    aux.insert(1,QString("Vai Para"));
     return aux;
 }
 
@@ -522,7 +612,8 @@ QList<QString> estrategia::obter_goleiros()
 {
     QList<QString> aux;
     aux.insert(0,QString("PARADO"));
-    aux.insert(1,QString("Goleiro 01"));
+    aux.insert(1,QString("Vai Para"));
+    aux.insert(2,QString("Goleiro 01"));
     return aux;
 }
 

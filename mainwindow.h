@@ -100,6 +100,10 @@ private slots:
 
     void on_finalizar_2_clicked();
 
+    void on_iniciar_3_clicked();
+
+    void on_finalizar_3_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

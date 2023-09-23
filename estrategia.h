@@ -7,11 +7,12 @@
 #include <math.h>
 #include <QList>
 
-enum comandos {PARADOS=0};
+enum comandos {PARADOS=0,DEFAULT=1};
 enum atacante {PARADO=0, VAI_PARA=1,ATACANTE_01=2};
-enum zagueiro {ZAGUEIRO_01=1};
-enum goleiro {GOLEIRO_01=1};
+enum zagueiro {ZAGUEIRO_01=2};
+enum goleiro {GOLEIRO_01=2};
 enum time {AMARELO=-1,AZUL=1};
+enum ID_JOGADORES {id_atacante=0,id_goleiro=1,id_zagueiro=2};
 
 
 struct _angle_
@@ -67,6 +68,15 @@ public:
     //Jogadores
     void atacante_01(int id, int _time); bool flag_atacante1; bool flag_atacante2; bool flag_atacante3;
     void goleiro_01(int id, int _time, float x = -0.7, float topl = 0.17);
+
+    //Flags de seleção dos jogadores e estratégia
+    int sel_atacante,sel_zagueiro,sel_goleiro,sel_estrategia;
+
+    //Definições da estratégia
+    void estrategias(int t_estrategia);
+    void atacantes(int t_atacante);
+    void zagueiros(int t_zagueiro);
+    void goleiros(int t_goleiro);
 
     //Velocidades das rodas de cada robô
     QVector<int> indice;
