@@ -115,7 +115,7 @@ void MainWindow::updateData()
         auto angle = visionClient->getPlayerOrientation(VSSRef::BLUE,blue_robots.at(i));
         rblue_ori[i] = (double)angle.value();
         rblue_vel[i] = visionClient->getPlayerVelocity(VSSRef::BLUE,blue_robots.at(i));
-        azul_robots.append(i);
+        azul_robots.append(i+1);
     }
     QVector<int> amarelo_robots;
     for(int i = 0; i < yellow_robots.size();i++)
@@ -124,7 +124,7 @@ void MainWindow::updateData()
         auto angle = visionClient->getPlayerOrientation(VSSRef::YELLOW,yellow_robots.at(i));
         ryellow_ori[i] = (double)angle.value();
         ryellow_vel[i] = visionClient->getPlayerVelocity(VSSRef::YELLOW,yellow_robots.at(i));
-        amarelo_robots.append(1);
+        amarelo_robots.append(i+1);
     }
 
     if(time_estrategia==VSSRef::YELLOW)
@@ -162,6 +162,9 @@ void MainWindow::updateFPS()
 void MainWindow::updateReferee()
 {
     QString comando;
+    amarelo->arbitro_comandos = refereeClient->getLastFoul();
+    azul->arbitro_comandos = refereeClient->getLastFoul();
+
     switch(refereeClient->getLastFoul()) {
     case FREE_KICK:
         comando = QString("FREE_KICK");
@@ -273,12 +276,12 @@ void MainWindow::sendCommand(QVector<int> index, float vL[], float vR[])
     std::cout << "\n===== VELOCITIES =====\n";
     for(int i=0; i < index.size(); i++)
     {
-        SerialComm->write_buf[2*index.at(i)-1]=SerialComm->converter_write(int(vL[i]*1e2));
-        SerialComm->write_buf[2*index.at(i)]=SerialComm->converter_write(int(vR[i]*1e2));
+        SerialComm->write_buf[2*index.at(i)-1]=SerialComm->converter_write(int(vR[index.at(i)-1]*1e2));
+        SerialComm->write_buf[2*index.at(i)]=SerialComm->converter_write(int(vL[index.at(i)-1]*1e2));
         QString robotDebugStr = QString("Robo %1  -> vR: %2 vL: %3 ")
-                                                .arg(i)
-                                                .arg(int(vR[i]*1e2))
-                                                .arg(int(vL[i]*1e2));
+                                                .arg(index.at(i))
+                                                .arg(int(vR[index.at(i)-1]*1e2))
+                                                .arg(int(vL[index.at(i)-1]*1e2));
         std::cout << robotDebugStr.toStdString() + '\n';
     }
     SerialComm->writeData();
@@ -583,11 +586,11 @@ void MainWindow::on_slider_vl_valueChanged(int value)
     }
     else
     {
-        for(int i = 1; i<10 ;i+=2)
-        {
-            SerialComm->write_buf[i]=0;
-        }
-        SerialComm->write_buf[2*index-1]=SerialComm->converter_write(value);
+        //for(int i = 2; i<=10 ;i+=2)
+        //{
+        //    SerialComm->write_buf[i]=0;
+        //}
+        SerialComm->write_buf[2*index]=SerialComm->converter_write(value);
     }
     SerialComm->write_buf[0]=255;
 
@@ -608,11 +611,11 @@ void MainWindow::on_slider_vr_valueChanged(int value)
     }
     else
     {
-        for(int i = 2; i<=10 ;i+=2)
-        {
-            SerialComm->write_buf[i]=0;
-        }
-        SerialComm->write_buf[2*index]=SerialComm->converter_write(value);
+        //for(int i = 1; i<10 ;i+=2)
+        //{
+        //    SerialComm->write_buf[i]=0;
+        //}
+        SerialComm->write_buf[2*index-1]=SerialComm->converter_write(value);
     }
     SerialComm->write_buf[0]=255;
 
@@ -628,8 +631,8 @@ void MainWindow::on_finalizar_clicked()
     float zeros[3];
     for(int i=0;i<3;i++)
     {
-        zeros[i];
-        indices.insert(i,i);
+        zeros[i]=0.0;
+        indices.insert(i,i+1);
     }
     this->sendCommand(indices,zeros,zeros);
 }
@@ -663,8 +666,8 @@ void MainWindow::on_finalizar_3_clicked()
     float zeros[3];
     for(int i=0;i<3;i++)
     {
-        zeros[i];
-        indices.insert(i,i);
+        zeros[i]=0.0;
+        indices.insert(i,i+1);
     }
     this->sendCommand(indices,zeros,zeros);
 }

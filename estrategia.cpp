@@ -10,9 +10,9 @@ estrategia::estrategia(int time)
     // Constantes de Modelo
     L = 3.75e-2; //Distância entre roda e centro
     R = 3.035e-2; /*3.035e-2 m*/
-    vrMax = 44.92;  // rad/s
-    Vmax = (1.36)/2.0; // 1.31 m/s
-    Wmax = (36.3)/8.0; // 35.0 rad/s
+    vrMax = 40.0;  // rad/s
+    Vmax = ((40.0*R)/1.5); // 1.31 m/s
+    Wmax = (40.0*(R/L))/8.0; // 35.0 rad/s
 
     for(int i=0;i<qtdRobos;i++)
     {
@@ -25,6 +25,9 @@ estrategia::estrategia(int time)
     //Flags de seleção dos jogadores e estratégia
     sel_atacante = PARADO; sel_zagueiro = PARADO; sel_goleiro = PARADO;
     sel_estrategia  = PARADOS;
+
+    //Abtitro
+    arbitro_comandos = -1;
 
 
     if(time==VSSRef::BLUE)
@@ -41,10 +44,25 @@ void estrategia::controle_e_navegacao()
 {
 
 
-    vai_para(0, this->ball_pos.x(), this->ball_pos.y());
-    atacante_01(0,AMARELO);
+//    / vai_para(0, this->ball_pos.x(), this->ball_pos.y());
+    goleiro_01(1,AMARELO);
+    atacante_01(0,AZUL);
+    //atacante_01(1,AZUL);
+    //vai_para(0, this->ball_pos.x(), this->ball_pos.y());
+    //vai_para(1, this->ball_pos.x(), this->ball_pos.y());
 
-   // estrategias(sel_estrategia);
+    //Goleiro - 0
+    //Zagueiro - 1
+    //Atacante - 2
+    /*switch (arbitro_comandos) {
+    case VSSRef::Foul::STOP:
+        estrategias(PARADOS);
+        break;
+    default:
+        break;
+    }*/
+
+    estrategias(sel_estrategia);
 
 }
 
@@ -90,7 +108,7 @@ void estrategia::vai_para(int id, float x_des, float y_des)
     std::cout << "Erro angular: "<< err.fi << "\n";
 
     //constantes do controle
-    float kv = 2.1; float kw = 0.66;
+    float kv = 2.5; float kw = 0.66;
     //Controle linear
     float V = Vmax*tanh(kv*d*err.flag);
     //Controle angular
@@ -101,8 +119,11 @@ void estrategia::vai_para(int id, float x_des, float y_des)
     std::cout << "V: "<< V << "\n";
     std::cout << "W: "<< W << "\n";
 
-    float v_R = ((V-W*L)/R)/vrMax;
-    float v_L = ((V+W*L)/R)/vrMax;
+    float v_R = ((V+W*L)/R)/vrMax;
+    float v_L = ((V-W*L)/R)/vrMax;
+ //   float v_R = 0.05;
+ //   float v_L = 0.05;
+
     vR[id] = fabs(v_R) > 1 ? sgn(v_R) : v_R;
     vL[id] = fabs(v_L) > 1 ? sgn(v_L) : v_L;
 }
@@ -222,8 +243,8 @@ void estrategia::posicionamento2(int id, float x_des, float y_des)
     float ka = 1;
     float kr = 1;
 
-    converte_vetor(V,0.3);
-    converte_vetor(F,0.3);
+    converte_vetor(V,0.5);
+    converte_vetor(F,0.2);
 
     float new_des[] = {(meu_time_pos[id].x() + ka*V[0] + kr*F[0]), (meu_time_pos[id].y() + ka*V[1] + kr*F[1])};
 
@@ -446,16 +467,16 @@ void estrategia::goleiro_01(int id, int _time, float x_, float topl)
     float top_limit = topl; //largura do gol/2
     float x_desejado = x_*_time;
 
-    float dist = distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),ball_pos.x(),ball_pos.x());
+    float dist = distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),ball_pos.x(),ball_pos.y());
     float new_pos[] = {0,0};
 
     //se a bola estiver longe utiliza o preditor
     if ( dist > 0.3){
         new_pos[0] = ball_pos.x();
-        new_pos[1] = ball_pos.x();
+        new_pos[1] = (fabs(ball_pos.y())<fabs(topl))?ball_pos.y():-topl*sgn(ball_pos.y());
     }else{
         new_pos[0] = ball_pos.x();
-        new_pos[1] = ball_pos.x();
+        new_pos[1] = (fabs(ball_pos.y())<fabs(topl))?ball_pos.y():-topl*sgn(ball_pos.y());
     }
 
     if(distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),x_desejado,meu_time_pos[id].y()) >= 0.02){ //se o robô está dentro do retângulo
@@ -478,23 +499,23 @@ void estrategia::goleiro_01(int id, int _time, float x_, float topl)
             andarFrente(id,0.0);
         }
         //gira se a bola estiver muito perto
-        if (distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),ball_pos.x(),ball_pos.x()) < 0.08){
-            if((ball_pos.x() < 0 && _time == 1)){
+        if (distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),ball_pos.x(),ball_pos.y()) < 0.08){
+            if((ball_pos.y() < 0 && _time == 1)){
                 girar(id,0.5*Wmax);
             }
-            if((ball_pos.x() > 0 && _time == -1)){
+            if((ball_pos.y() > 0 && _time == -1)){
                 girar(id,-0.5*Wmax);
             }
-            if((ball_pos.x() > 0 && _time == 1)){
+            if((ball_pos.y() > 0 && _time == 1)){
                 girar(id,-0.5*Wmax);
             }
-            if((ball_pos.x() < 0 && _time == -1)){
+            if((ball_pos.y() < 0 && _time == -1)){
                 girar(id,0.5*Wmax);
             }
         }
         // Se a bola tiver acima ou abaixo da trave
-        if(fabs(ball_pos.x())>top_limit)
-            vai_para(id,x_desejado,sgn(ball_pos.x())*(top_limit+0.03));
+        if(fabs(ball_pos.y())>top_limit)
+            vai_para(id,x_desejado,sgn(ball_pos.y())*(top_limit+0.03));
 
     }
 }
@@ -528,12 +549,8 @@ void estrategia::atacantes(int t_atacante)
         vai_para(id_atacante,this->ball_pos.x(),this->ball_pos.y());
         break;
     case PARADO:
-        for(int i=0;i<qtdRobos;i++)
-        {
-            this->vL[i]=0;
-            this->vR[i]=0;
-        }
-        break;
+        this->vL[id_atacante]=0;
+        this->vR[id_atacante]=0;
     default:
         break;
     }
@@ -544,11 +561,8 @@ void estrategia::zagueiros(int t_zagueiro)
 {
     switch (t_zagueiro) {
     case PARADO:
-        for(int i=0;i<qtdRobos;i++)
-        {
-            this->vL[i]=0;
-            this->vR[i]=0;
-        }
+        this->vL[id_zagueiro]=0;
+        this->vR[id_zagueiro]=0;
         break;
     case VAI_PARA:
         vai_para(id_zagueiro,this->ball_pos.x(),this->ball_pos.y());
@@ -571,11 +585,8 @@ void estrategia::goleiros(int t_goleiro)
         vai_para(id_goleiro,this->ball_pos.x(),this->ball_pos.y());
         break;
     case PARADO:
-        for(int i=0;i<qtdRobos;i++)
-        {
-            this->vL[i]=0;
-            this->vR[i]=0;
-        }
+        this->vL[id_goleiro]=0;
+        this->vR[id_goleiro]=0;
         break;
     default:
         break;
@@ -605,6 +616,7 @@ QList<QString> estrategia::obter_zagueiros()
     QList<QString> aux;
     aux.insert(0,QString("PARADO"));
     aux.insert(1,QString("Vai Para"));
+    aux.insert(2,QString("Zagueiro Beq"));
     return aux;
 }
 

@@ -71,6 +71,8 @@ public:
 
     //Flags de seleção dos jogadores e estratégia
     int sel_atacante,sel_zagueiro,sel_goleiro,sel_estrategia;
+    // Comandos do arbitro
+    int arbitro_comandos;
 
     //Definições da estratégia
     void estrategias(int t_estrategia);

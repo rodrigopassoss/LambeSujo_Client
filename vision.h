@@ -9,6 +9,7 @@
 #include <proto/vssref_common.pb.h>
 #include <proto/wrapper.pb.h>
 #include <constants/constants.h>
+#include <algorithm>
 
 class Vision : public QObject
 {

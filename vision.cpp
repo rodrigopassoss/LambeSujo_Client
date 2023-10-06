@@ -272,6 +272,7 @@ QList<quint8> Vision::getAvailablePlayers(VSSRef::Color teamColor) {
             availableList.push_back((*it));
         }
     }
+    std::sort(availableList.begin(),availableList.end());
     _dataMutex.unlock();
 
     return availableList;
