@@ -112,7 +112,7 @@ public:
     QSpacerItem *horizontalSpacer_8;
     QGridLayout *gridLayout_20;
     QLabel *label_11;
-    QComboBox *comboBox;
+    QComboBox *sel_color;
     QSpacerItem *horizontalSpacer_7;
     QMenuBar *menubar;
     QStatusBar *statusbar;
@@ -520,12 +520,12 @@ public:
 
         gridLayout_20->addWidget(label_11, 0, 0, 1, 1);
 
-        comboBox = new QComboBox(groupBox_5);
-        comboBox->addItem(QString());
-        comboBox->addItem(QString());
-        comboBox->setObjectName(QString::fromUtf8("comboBox"));
+        sel_color = new QComboBox(groupBox_5);
+        sel_color->addItem(QString());
+        sel_color->addItem(QString());
+        sel_color->setObjectName(QString::fromUtf8("sel_color"));
 
-        gridLayout_20->addWidget(comboBox, 0, 1, 1, 1);
+        gridLayout_20->addWidget(sel_color, 0, 1, 1, 1);
 
         horizontalSpacer_7 = new QSpacerItem(183, 14, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
@@ -767,8 +767,8 @@ public:
         iniciar_3->setText(QCoreApplication::translate("MainWindow", "iniciar", nullptr));
         finalizar_3->setText(QCoreApplication::translate("MainWindow", "Finalizar", nullptr));
         label_11->setText(QCoreApplication::translate("MainWindow", "Nosso time:", nullptr));
-        comboBox->setItemText(0, QCoreApplication::translate("MainWindow", "azul", nullptr));
-        comboBox->setItemText(1, QCoreApplication::translate("MainWindow", "amarelo", nullptr));
+        sel_color->setItemText(0, QCoreApplication::translate("MainWindow", "azul", nullptr));
+        sel_color->setItemText(1, QCoreApplication::translate("MainWindow", "amarelo", nullptr));
 
         tabWidget->setTabText(tabWidget->indexOf(tab_2), QCoreApplication::translate("MainWindow", "Estrat\303\251gia", nullptr));
         groupBox->setTitle(QCoreApplication::translate("MainWindow", "Interface com o vss-vision", nullptr));

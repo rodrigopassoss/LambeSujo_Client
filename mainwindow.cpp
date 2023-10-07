@@ -660,6 +660,8 @@ void MainWindow::on_iniciar_3_clicked()
     amarelo->sel_zagueiro = ui->sel_zagueiro->currentIndex();
     amarelo->sel_goleiro = ui->sel_goleiro->currentIndex();
     amarelo->sel_estrategia = ui->sel_estrategia->currentIndex();
+
+    time_estrategia = ui->sel_color->currentIndex();
 }
 
 
