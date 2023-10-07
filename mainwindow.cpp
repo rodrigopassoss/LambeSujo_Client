@@ -48,7 +48,7 @@ MainWindow::MainWindow(QWidget *parent)
    //Cria os objetos para estratégia
    azul = new estrategia(VSSRef::BLUE);
    amarelo = new estrategia(VSSRef::YELLOW);
-   time_estrategia = VSSRef::YELLOW; //Configurável via interface
+   time_estrategia = VSSRef::BLUE; //Configurável via interface
 
    //Atuliza menu da estratégia
    for(int i=0;i<amarelo->obter_estrategias().size();i++)
@@ -164,6 +164,11 @@ void MainWindow::updateReferee()
     QString comando;
     amarelo->arbitro_comandos = refereeClient->getLastFoul();
     azul->arbitro_comandos = refereeClient->getLastFoul();
+    amarelo->arbitro_comandos_cor = refereeClient->getLastFoulColor();
+    azul->arbitro_comandos_cor = refereeClient->getLastFoulColor();
+    amarelo->arbitro_comandos_freeball = refereeClient->getLastFoulQuadrant();
+    azul->arbitro_comandos_freeball = refereeClient->getLastFoulQuadrant();
+
 
     switch(refereeClient->getLastFoul()) {
     case FREE_KICK:
@@ -660,6 +665,7 @@ void MainWindow::on_iniciar_3_clicked()
 
 void MainWindow::on_finalizar_3_clicked()
 {
+
     disconnect(cronometro,SIGNAL(timeout()),visionClient,SLOT(loop()));
 
     QVector<int> indices;

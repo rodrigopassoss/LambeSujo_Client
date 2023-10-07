@@ -70,6 +70,8 @@ public:
     estrategia *azul, *amarelo;
 
 
+
+
 private slots:
 
     void on_iniciar_clicked();

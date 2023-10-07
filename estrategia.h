@@ -7,7 +7,7 @@
 #include <math.h>
 #include <QList>
 
-enum comandos {PARADOS=0,DEFAULT=1};
+enum comandos {PARADOS=0,DEFAULT=1,REPOSICIONAR,REPOSICIONAR2};
 enum atacante {PARADO=0, VAI_PARA=1,ATACANTE_01=2};
 enum zagueiro {ZAGUEIRO_01=2};
 enum goleiro {GOLEIRO_01=2};
@@ -72,7 +72,9 @@ public:
     //Flags de seleção dos jogadores e estratégia
     int sel_atacante,sel_zagueiro,sel_goleiro,sel_estrategia;
     // Comandos do arbitro
-    int arbitro_comandos;
+    int arbitro_comandos, arbitro_comandos_freeball,id_robo_freeball,arbitro_comandos_cor;
+    // Variáveis para o reposicionamento
+    float repo_x[3], repo_y[3];
 
     //Definições da estratégia
     void estrategias(int t_estrategia);
