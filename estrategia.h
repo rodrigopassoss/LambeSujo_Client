@@ -7,9 +7,9 @@
 #include <math.h>
 #include <QList>
 
-enum comandos {PARADOS=0,DEFAULT=1,REPOSICIONAR,REPOSICIONAR2};
+enum comandos {PARADOS=0,DEFAULT=1,DIA_09=2,REPOSICIONAR,REPOSICIONAR2};
 enum atacante {PARADO=0, VAI_PARA=1,ATACANTE_01=2};
-enum zagueiro {ZAGUEIRO_01=2};
+enum zagueiro {ZAG_ATACANTE_01=2};
 enum goleiro {GOLEIRO_01=2};
 enum time {AMARELO=-1,AZUL=1};
 enum ID_JOGADORES {id_atacante=0,id_goleiro=1,id_zagueiro=2};

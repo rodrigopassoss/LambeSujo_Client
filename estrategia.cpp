@@ -312,10 +312,8 @@ void estrategia::controle_e_navegacao()
         break;
     case VSSRef::Foul::GAME_ON:
         std::cout<<"GAME_ON"<<"\n";
-        //estrategias(sel_estrategia);
-        goleiro_01(id_goleiro,AZUL);
-        atacante_01(id_atacante,AZUL);
-        vai_para(id_zagueiro,ball_pos.x(),ball_pos.y());
+        estrategias(sel_estrategia);
+
         //atacante_01(1,AZUL);
         break;
     case VSSRef::Foul::KICKOFF:
@@ -840,6 +838,12 @@ void estrategia::estrategias(int t_estrategia)
         zagueiros(PARADO);
         goleiros(PARADO);
         break;
+    case DIA_09:
+        std::cout<<"Estratégia DIA 09: Incluida!"<<"\n";
+        goleiros(GOLEIRO_01);
+        atacantes(ATACANTE_01);
+        zagueiros(ZAG_ATACANTE_01);
+        break;
     case REPOSICIONAR:
         for(int i=0;i<3;i++)
         {
@@ -871,9 +875,9 @@ void estrategia::estrategias(int t_estrategia)
         }
         break;
     default:
-        atacantes(sel_atacante);
-        goleiros(sel_goleiro);
-        zagueiros(sel_zagueiro);
+        atacantes(VAI_PARA);
+        zagueiros(VAI_PARA);
+        goleiros(GOLEIRO_01);
         break;
     }
 
@@ -910,6 +914,13 @@ void estrategia::zagueiros(int t_zagueiro)
     case VAI_PARA:
         vai_para(id_zagueiro,this->ball_pos.x(),this->ball_pos.y());
         break;
+    case ZAG_ATACANTE_01:
+        if(nossaCor==VSSRef::Color::YELLOW)
+            atacante_01(id_zagueiro,AMARELO);
+        else
+            atacante_01(id_zagueiro,AZUL);
+
+        break;
     default:
         break;
     }
@@ -920,9 +931,9 @@ void estrategia::goleiros(int t_goleiro)
     switch (t_goleiro) {
     case GOLEIRO_01:
         if(nossaCor==VSSRef::YELLOW)
-            goleiro_01(id_goleiro,AZUL);  //está trocado só para testes
-        else
             goleiro_01(id_goleiro,AMARELO);
+        else
+            goleiro_01(id_goleiro,AZUL);
         break;
     case VAI_PARA:
         vai_para(id_goleiro,this->ball_pos.x(),this->ball_pos.y());
@@ -942,6 +953,7 @@ QList<QString> estrategia::obter_estrategias()
     QList<QString> aux;
     aux.insert(0,QString("PARADOS"));
     aux.insert(1,QString("DEFAULT"));
+    aux.insert(2,QString("DIA 09"));
     return aux;
 }
 
@@ -959,7 +971,7 @@ QList<QString> estrategia::obter_zagueiros()
     QList<QString> aux;
     aux.insert(0,QString("PARADO"));
     aux.insert(1,QString("Vai Para"));
-    aux.insert(2,QString("Zagueiro Beq"));
+    aux.insert(2,QString("Atacante 01"));
     return aux;
 }
 
