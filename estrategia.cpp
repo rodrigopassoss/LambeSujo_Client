@@ -72,6 +72,9 @@ void estrategia::controle_e_navegacao()
                 repo_y[id_goleiro] = 0.0;
                 repo_y[id_zagueiro] = 0.2;
                 repo_y[id_atacante] = 0.0;
+                repo_theta[id_goleiro] = 0.0;
+                repo_theta[id_zagueiro] = 0.0;
+                repo_theta[id_atacante] = 0.0;
 
             } else
             {
@@ -81,6 +84,9 @@ void estrategia::controle_e_navegacao()
                 repo_y[id_goleiro] = 0.0;
                 repo_y[id_zagueiro] = 0.25;
                 repo_y[id_atacante] = -0.25;
+                repo_theta[id_goleiro] = 0.0;
+                repo_theta[id_zagueiro] = 0.0;
+                repo_theta[id_atacante] = 0.0;
             }
         }else
         {
@@ -92,6 +98,9 @@ void estrategia::controle_e_navegacao()
                 repo_y[id_goleiro] = 0.0;
                 repo_y[id_zagueiro] = 0.2;
                 repo_y[id_atacante] = 0.0;
+                repo_theta[id_goleiro] = 0.0;
+                repo_theta[id_zagueiro] = 0.0;
+                repo_theta[id_atacante] = 0.0;
             } else
             {
                 repo_x[id_goleiro] = AMARELO*(-0.7);
@@ -100,6 +109,9 @@ void estrategia::controle_e_navegacao()
                 repo_y[id_goleiro] = 0.0;
                 repo_y[id_zagueiro] = 0.25;
                 repo_y[id_atacante] = -0.25;
+                repo_theta[id_goleiro] = 0.0;
+                repo_theta[id_zagueiro] = 0.0;
+                repo_theta[id_atacante] = 0.0;
             }
         }
         estrategias(REPOSICIONAR);
@@ -116,6 +128,9 @@ void estrategia::controle_e_navegacao()
                 repo_y[id_goleiro] = 0.0;
                 repo_y[id_zagueiro] = 0.2;
                 repo_y[id_atacante] = 0.0;
+                repo_theta[id_goleiro] = 0.0;
+                repo_theta[id_zagueiro] = 0.0;
+                repo_theta[id_atacante] = 0.0;
 
             } else
             {
@@ -125,6 +140,9 @@ void estrategia::controle_e_navegacao()
                 repo_y[id_goleiro] = 0.0;
                 repo_y[id_zagueiro] = 0.25;
                 repo_y[id_atacante] = -0.25;
+                repo_theta[id_goleiro] = 0.0;
+                repo_theta[id_zagueiro] = 0.0;
+                repo_theta[id_atacante] = 0.0;
             }
         }else
         {
@@ -136,6 +154,9 @@ void estrategia::controle_e_navegacao()
                 repo_y[id_goleiro] = 0.0;
                 repo_y[id_zagueiro] = 0.2;
                 repo_y[id_atacante] = 0.0;
+                repo_theta[id_goleiro] = 0.0;
+                repo_theta[id_zagueiro] = 0.0;
+                repo_theta[id_atacante] = 0.0;
             } else
             {
                 repo_x[id_goleiro] = AMARELO*(-0.7);
@@ -144,6 +165,9 @@ void estrategia::controle_e_navegacao()
                 repo_y[id_goleiro] = 0.0;
                 repo_y[id_zagueiro] = 0.25;
                 repo_y[id_atacante] = -0.25;
+                repo_theta[id_goleiro] = 0.0;
+                repo_theta[id_zagueiro] = 0.0;
+                repo_theta[id_atacante] = 0.0;
             }
         }
         estrategias(REPOSICIONAR);
@@ -160,6 +184,9 @@ void estrategia::controle_e_navegacao()
                 repo_y[id_goleiro] = 0.0;
                 repo_y[id_zagueiro] = 0.2;
                 repo_y[id_atacante] = -0.2;
+                repo_theta[id_goleiro] = 0.0;
+                repo_theta[id_zagueiro] = 0.0;
+                repo_theta[id_atacante] = 0.0;
 
             } else
             {
@@ -169,6 +196,9 @@ void estrategia::controle_e_navegacao()
                 repo_y[id_goleiro] = 0.0;
                 repo_y[id_zagueiro] = 0.25;
                 repo_y[id_atacante] = -0.25;
+                repo_theta[id_goleiro] = 0.0;
+                repo_theta[id_zagueiro] = 0.0;
+                repo_theta[id_atacante] = 0.0;
             }
         }else
         {
@@ -180,6 +210,9 @@ void estrategia::controle_e_navegacao()
                 repo_y[id_goleiro] = 0.0;
                 repo_y[id_zagueiro] = 0.2;
                 repo_y[id_atacante] = -0.2;
+                repo_theta[id_goleiro] = 0.0;
+                repo_theta[id_zagueiro] = 0.0;
+                repo_theta[id_atacante] = 0.0;
 
             } else
             {
@@ -189,6 +222,9 @@ void estrategia::controle_e_navegacao()
                 repo_y[id_goleiro] = 0.0;
                 repo_y[id_zagueiro] = 0.25;
                 repo_y[id_atacante] = -0.25;
+                repo_theta[id_goleiro] = 0.0;
+                repo_theta[id_zagueiro] = 0.0;
+                repo_theta[id_atacante] = 0.0;
             }
         }
         estrategias(REPOSICIONAR);
@@ -201,52 +237,75 @@ void estrategia::controle_e_navegacao()
             {
                 repo_x[id_atacante] = AZUL*(0.18);
                 repo_y[id_atacante] = 0.4;
-                id_robo_freeball = id_atacante;
+                repo_x[id_zagueiro] = AZUL*(0.18);
+                repo_y[id_zagueiro] = 0.0;
+                repo_theta[id_zagueiro] = 0.0;
+                repo_theta[id_atacante] = 0.0;
             }
             else if(arbitro_comandos_freeball==VSSRef::Quadrant::QUADRANT_4)
             {
                 repo_x[id_atacante] = AZUL*(0.18);
                 repo_y[id_atacante] = -0.4;
-                id_robo_freeball = id_atacante;
+                repo_x[id_zagueiro] = AZUL*(0.18);
+                repo_y[id_zagueiro] = 0.0;
+                repo_theta[id_zagueiro] = 0.0;
+                repo_theta[id_atacante] = 0.0;
             }
             else if(arbitro_comandos_freeball==VSSRef::Quadrant::QUADRANT_2)
             {
                 repo_x[id_zagueiro] = AZUL*(-0.59);
                 repo_y[id_zagueiro] = 0.45;
-                id_robo_freeball = id_zagueiro;
+                repo_x[id_atacante] = AZUL*(-0.59);
+                repo_y[id_atacante] = 0.0;
+                repo_theta[id_zagueiro] = 0.0;
+                repo_theta[id_atacante] = 0.0;
             }
             else if(arbitro_comandos_freeball==VSSRef::Quadrant::QUADRANT_3)
             {
                 repo_x[id_zagueiro] = AZUL*(-0.59);
                 repo_y[id_zagueiro] = -0.45;
-                id_robo_freeball = id_zagueiro;
-            }
+                repo_x[id_atacante] = AZUL*(-0.59);
+                repo_y[id_atacante] = 0.0;
+                repo_theta[id_zagueiro] = 0.0;
+                repo_theta[id_atacante] = 0.0;            }
         }else
         {
             if(arbitro_comandos_freeball==VSSRef::Quadrant::QUADRANT_1)
             {
                 repo_x[id_zagueiro] = AMARELO*(-0.59);
                 repo_y[id_zagueiro] = 0.4;
-                id_robo_freeball = id_zagueiro;
+                repo_x[id_atacante] = AMARELO*(-0.59);
+                repo_y[id_atacante] = 0.0;
+                repo_theta[id_zagueiro] = 0.0;
+                repo_theta[id_atacante] = 0.0;
             }
             else if(arbitro_comandos_freeball==VSSRef::Quadrant::QUADRANT_4)
             {
                 repo_x[id_zagueiro] = AMARELO*(-0.59);
                 repo_y[id_zagueiro] = -0.4;
-                id_robo_freeball = id_zagueiro;
+                repo_x[id_atacante] = AMARELO*(-0.59);
+                repo_y[id_atacante] = 0.0;
+                repo_theta[id_zagueiro] = 0.0;
+                repo_theta[id_atacante] = 0.0;
             }
             else if(arbitro_comandos_freeball==VSSRef::Quadrant::QUADRANT_2)
             {
 
                 repo_x[id_atacante] = AMARELO*(0.18);
                 repo_y[id_atacante] = 0.45;
-                id_robo_freeball = id_atacante;
+                repo_x[id_zagueiro] = AMARELO*(0.18);
+                repo_y[id_zagueiro] = 0.0;
+                repo_theta[id_zagueiro] = 0.0;
+                repo_theta[id_atacante] = 0.0;
             }
             else if(arbitro_comandos_freeball==VSSRef::Quadrant::QUADRANT_3)
             {
                 repo_x[id_atacante] = AMARELO*(0.18);
                 repo_y[id_atacante] = -0.45;
-                id_robo_freeball = id_atacante;
+                repo_x[id_zagueiro] = AMARELO*(0.18);
+                repo_y[id_zagueiro] = 0.0;
+                repo_theta[id_zagueiro] = 0.0;
+                repo_theta[id_atacante] = 0.0;
             }
         }
         estrategias(REPOSICIONAR2);
@@ -350,6 +409,32 @@ void estrategia::vai_para(int id, float x_des, float y_des)
     float v_L = ((V-W*L)/R)/vrMax;
  //   float v_R = 0.05;
  //   float v_L = 0.05;
+
+    vR[id] = fabs(v_R) > 1 ? sgn(v_R) : v_R;
+    vL[id] = fabs(v_L) > 1 ? sgn(v_L) : v_L;
+}
+
+void estrategia::olhar_para(int id, float theta)
+{
+    float x_des = meu_time_pos[id].x() + cos(theta);
+    float y_des = meu_time_pos[id].y() + sin(theta);
+    angle_err err = olhar(id,x_des,y_des);
+    std::cout << "Erro angular: "<< err.fi << "\n";
+
+    //Controle linear
+    float V = 0;
+    //Controle angular
+    float kw = 0.66;
+    float W = Wmax*tanh(kw*err.fi);
+
+    //Calculo das Velocidas das Rodas
+    std::cout << "V: "<< V << "\n";
+    std::cout << "W: "<< W << "\n";
+
+    float v_R = ((V+W*L)/R)/vrMax;
+    float v_L = ((V-W*L)/R)/vrMax;
+    //   float v_R = 0.05;
+    //   float v_L = 0.05;
 
     vR[id] = fabs(v_R) > 1 ? sgn(v_R) : v_R;
     vL[id] = fabs(v_L) > 1 ? sgn(v_L) : v_L;
@@ -756,21 +841,34 @@ void estrategia::estrategias(int t_estrategia)
         goleiros(PARADO);
         break;
     case REPOSICIONAR:
-        for(int i=0;i<3;i++){vai_para(i,repo_x[i],repo_y[i]);};
+        for(int i=0;i<3;i++)
+        {
+            float d = distancia(meu_time_pos[i].x(),meu_time_pos[i].y(),
+                                repo_x[i], repo_y[i]);
+            if(d > 0.05)
+                vai_para(i,repo_x[i],repo_y[i]);
+            else
+                olhar_para(i,repo_theta[i]);
+        };
         break;
     case REPOSICIONAR2:
-        atacantes(PARADO);
-        zagueiros(PARADO);
         goleiros(PARADO);
-        vai_para(id_robo_freeball,repo_x[id_robo_freeball],repo_y[id_robo_freeball]);
-        /*for(int i=0;i<qtdRobos;i++)
         {
-            if(i!=id_robo_freeball)
-            {
-                this->vL[i]=0;
-                this->vR[i]=0;
-            }
-        }*/
+            float d = distancia(meu_time_pos[id_atacante].x(),meu_time_pos[id_atacante].y(),
+                                repo_x[id_atacante], repo_y[id_atacante]);
+            if(d > 0.05)
+                vai_para(id_atacante,repo_x[id_atacante],repo_y[id_atacante]);
+            else
+                olhar_para(id_atacante,repo_theta[id_atacante]);
+        }
+        {
+            float d = distancia(meu_time_pos[id_zagueiro].x(),meu_time_pos[id_zagueiro].y(),
+                                repo_x[id_zagueiro], repo_y[id_zagueiro]);
+            if(d > 0.05)
+                vai_para(id_zagueiro,repo_x[id_zagueiro],repo_y[id_zagueiro]);
+            else
+                olhar_para(id_zagueiro,repo_theta[id_zagueiro]);
+        }
         break;
     default:
         atacantes(sel_atacante);

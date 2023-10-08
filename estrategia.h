@@ -45,6 +45,7 @@ public:
 
     //Controle de Movimento
     void vai_para(int id, float x, float y);
+    void olhar_para(int id, float theta);
     void posicionamento(int id, float x, float y); // vai_para + desvio de obstáculo
     void posicionamento2(int id, float x, float y); // esse desvia da bola e do nosso time tbm
     void andarFrente(int id,int vel);
@@ -74,13 +75,14 @@ public:
     // Comandos do arbitro
     int arbitro_comandos, arbitro_comandos_freeball,id_robo_freeball,arbitro_comandos_cor;
     // Variáveis para o reposicionamento
-    float repo_x[3], repo_y[3];
+    float repo_x[3], repo_y[3], repo_theta[3];
 
     //Definições da estratégia
     void estrategias(int t_estrategia);
     void atacantes(int t_atacante);
     void zagueiros(int t_zagueiro);
     void goleiros(int t_goleiro);
+
 
     //Velocidades das rodas de cada robô
     QVector<int> indice;
