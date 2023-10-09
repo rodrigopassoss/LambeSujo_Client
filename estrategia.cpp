@@ -11,7 +11,7 @@ estrategia::estrategia(int time)
     L = 3.75e-2; //Distância entre roda e centro
     R = 3.035e-2; /*3.035e-2 m*/
     vrMax = 40.0;  // rad/s
-    Vmax = ((40.0*R)/1.5); // 1.31 m/s
+    Vmax = ((40.0*R)/1.0); // 1.31 m/s
     Wmax = (40.0*(R/L))/6.5; // 35.0 rad/s
 
     for(int i=0;i<qtdRobos;i++)
@@ -692,6 +692,7 @@ void estrategia::saturacao(float _pos[]){
 
     if (_pos[1] < -lim_y)
         _pos[1] = -lim_y;
+
 }
 
 void estrategia::converte_vetor(float V[],float raio){
@@ -718,9 +719,9 @@ bool estrategia::passagem_limpa(int id, float x_des, float y_des)
         u[0] = u[0] + v[0]*passo;
         u[1] = u[1] + v[1]*passo;
 
-        if(menor_distancia(u[0],u[1])<0.1)
+        if(menor_distancia(u[0],u[1])<0.06)
             return false;
-        if(menor_distancia2(id,u[0],u[1])<0.1)
+        if(menor_distancia2(id,u[0],u[1])<0.06)
             return false;
     }
     return true;
@@ -735,7 +736,7 @@ void estrategia::fire_kick(int id, int _time)
     float y = meu_time_pos[id].y() + vec[1]*(_time*0.75-meu_time_pos[id].x())/vec[0];
     if ((fabs(y)<y_lim)&(fabs(th.fi)<ang_lim))
     {
-        std::cout << "FIRE_KICK" << "\n";
+        std::cout << Text::cyan("[Estratégia] ", true) << Text::bold("FIRE KICK!!!") + '\n';
         vai_para(id,_time*0.75,y);
     }
 }
@@ -811,7 +812,7 @@ void estrategia::atacante_01(int id, int _time)
 
     float d_bg = distancia(x_goal,y_goal,ball_pos.x(),ball_pos.y());
     float vec[] = {(x_goal - ball_pos.x())/d_bg,(y_goal - ball_pos.y())/d_bg};
-    float passo1 = 0.15; float passo2 = 0.1; float delta = 0.07;
+    float passo1 = 0.3; float passo2 = 0.1; float delta = 0.07;
 
     float d_ball = distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),ball_pos.x(),ball_pos.y());
     if( (d_ball > (passo2+delta)) || flag_atacante3 )
@@ -827,8 +828,11 @@ void estrategia::atacante_01(int id, int _time)
             y_des = abs(y_des) < 0.35? 0.35*sgn(y_des):y_des;
         }
         //---
-
-        vai_para(id,x_des,y_des);
+        float dist_ = distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),x_des,y_des);
+        if(passagem_limpa(id,x_des,y_des)&(dist_>2*delta))
+            vai_para(id,x_des+0.2*sgn(y_des),y_des+0.2*sgn(y_des));
+        else
+            posicionamento2(id,x_des,y_des);
 
         if(flag_atacante2 == true)
         {
