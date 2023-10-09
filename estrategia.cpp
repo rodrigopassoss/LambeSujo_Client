@@ -11,8 +11,8 @@ estrategia::estrategia(int time)
     L = 3.75e-2; //Distância entre roda e centro
     R = 3.035e-2; /*3.035e-2 m*/
     vrMax = 40.0;  // rad/s
-    Vmax = ((40.0*R)/1.0); // 1.31 m/s
-    Wmax = (40.0*(R/L))/6.5; // 35.0 rad/s
+    Vmax = ((40.0*R)/1.333); // 1.31 m/s
+    Wmax = (40.0*(R/L))/7.0; // 35.0 rad/s
 
     for(int i=0;i<qtdRobos;i++)
     {
@@ -357,11 +357,13 @@ void estrategia::controle_e_navegacao()
         }
         estrategias(REPOSICIONAR);
         break;
+    case VSSRef::Foul::HALT:
+        std::cout << Text::cyan("[Estratégia] ", true) << Text::bold("Referee - HALT!") + '\n';
+        estrategias(PARADOS);
+        break;
     default:
-        std::cout<<"SEM ARBITRO!"<<"\n";
-        /*vL[0] = 0.5;
-        vL[1] = 0.5;
-        vL[2] = 0.5;*/
+        std::cout << Text::cyan("[Estratégia] ", true) << Text::bold("Sem Arbitro!") + '\n';
+        estrategias(sel_estrategia);
 
         break;
     }
@@ -829,10 +831,11 @@ void estrategia::atacante_01(int id, int _time)
         }
         //---
         float dist_ = distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),x_des,y_des);
-        if(passagem_limpa(id,x_des,y_des)&(dist_>2*delta))
-            vai_para(id,x_des+0.2*sgn(y_des),y_des+0.2*sgn(y_des));
+        if(!passagem_limpa(id,x_des,y_des)&(dist_<2*delta)&(ball_pos.x()>meu_time_pos[id].y()))
+            posicionamento(id,x_des,y_des);
         else
-            posicionamento2(id,x_des,y_des);
+            vai_para(id,ball_pos.x(),ball_pos.y());
+
 
         if(flag_atacante2 == true)
         {
@@ -1085,7 +1088,7 @@ void estrategia::estrategias(int t_estrategia)
         goleiros(PARADO);
         break;
     case DIA_09:
-        std::cout<<"Estratégia DIA 09/10!"<<"\n";
+        std::cout << Text::cyan("[Estratégia] ", true) << Text::bold("Estratŕgia de 09/10") + '\n';
         goleiros(sel_goleiro);
         atacantes(sel_atacante);
         zagueiros(sel_zagueiro);
