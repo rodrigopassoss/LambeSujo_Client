@@ -29,6 +29,19 @@ estrategia::estrategia(int time)
     //Abtitro
     arbitro_comandos = -1;
 
+    //Inicialização do vetor de preditor
+    int N = 5;
+    ballPredPos temp;
+    temp.x = 0;
+    temp.y = 0;
+
+    for(int i = 0; i < N; i++)
+    {
+        ballPredMemory.push_back(temp);
+    }
+
+    predictedBall = temp;
+
 
     if(time==VSSRef::BLUE)
     {
@@ -57,11 +70,11 @@ void estrategia::controle_e_navegacao()
  // Posisionamento automáticco
     switch (arbitro_comandos) {
     case VSSRef::Foul::STOP:
-        std::cout<<"STOP"<<'\n';
+        std::cout << Text::cyan("[Estratégia] ", true) << Text::bold("Referee - STOP!") + '\n';
         estrategias(PARADOS);
         break;
     case VSSRef::Foul::FREE_KICK:
-        std::cout<<"FREE_KICK"<<'\n';
+        std::cout << Text::cyan("[Estratégia] ", true) << Text::bold("Referee - FREE_KICK!") + '\n';
         if(nossaCor==VSSRef::Color::BLUE)
         {
             if(arbitro_comandos_cor==VSSRef::Color::BLUE)
@@ -72,7 +85,7 @@ void estrategia::controle_e_navegacao()
                 repo_y[id_goleiro] = 0.0;
                 repo_y[id_zagueiro] = 0.2;
                 repo_y[id_atacante] = 0.0;
-                repo_theta[id_goleiro] = 0.0;
+                repo_theta[id_goleiro] = M_PI/2;
                 repo_theta[id_zagueiro] = 0.0;
                 repo_theta[id_atacante] = 0.0;
 
@@ -84,7 +97,7 @@ void estrategia::controle_e_navegacao()
                 repo_y[id_goleiro] = 0.0;
                 repo_y[id_zagueiro] = 0.25;
                 repo_y[id_atacante] = -0.25;
-                repo_theta[id_goleiro] = 0.0;
+                repo_theta[id_goleiro] = M_PI/2;
                 repo_theta[id_zagueiro] = 0.0;
                 repo_theta[id_atacante] = 0.0;
             }
@@ -98,7 +111,7 @@ void estrategia::controle_e_navegacao()
                 repo_y[id_goleiro] = 0.0;
                 repo_y[id_zagueiro] = 0.2;
                 repo_y[id_atacante] = 0.0;
-                repo_theta[id_goleiro] = 0.0;
+                repo_theta[id_goleiro] = M_PI/2;
                 repo_theta[id_zagueiro] = 0.0;
                 repo_theta[id_atacante] = 0.0;
             } else
@@ -109,7 +122,7 @@ void estrategia::controle_e_navegacao()
                 repo_y[id_goleiro] = 0.0;
                 repo_y[id_zagueiro] = 0.25;
                 repo_y[id_atacante] = -0.25;
-                repo_theta[id_goleiro] = 0.0;
+                repo_theta[id_goleiro] = M_PI/2;
                 repo_theta[id_zagueiro] = 0.0;
                 repo_theta[id_atacante] = 0.0;
             }
@@ -117,7 +130,7 @@ void estrategia::controle_e_navegacao()
         estrategias(REPOSICIONAR);
         break;
     case VSSRef::Foul::PENALTY_KICK:
-        std::cout<<"PENALTY_KICK"<<'\n';
+        std::cout << Text::cyan("[Estratégia] ", true) << Text::bold("Referee - PENALTY_KICK!") + '\n';
         if(nossaCor==VSSRef::Color::BLUE)
         {
             if(arbitro_comandos_cor==VSSRef::Color::BLUE)
@@ -128,7 +141,7 @@ void estrategia::controle_e_navegacao()
                 repo_y[id_goleiro] = 0.0;
                 repo_y[id_zagueiro] = 0.2;
                 repo_y[id_atacante] = 0.0;
-                repo_theta[id_goleiro] = 0.0;
+                repo_theta[id_goleiro] = M_PI/2;
                 repo_theta[id_zagueiro] = 0.0;
                 repo_theta[id_atacante] = 0.0;
 
@@ -140,7 +153,7 @@ void estrategia::controle_e_navegacao()
                 repo_y[id_goleiro] = 0.0;
                 repo_y[id_zagueiro] = 0.25;
                 repo_y[id_atacante] = -0.25;
-                repo_theta[id_goleiro] = 0.0;
+                repo_theta[id_goleiro] = M_PI/2;
                 repo_theta[id_zagueiro] = 0.0;
                 repo_theta[id_atacante] = 0.0;
             }
@@ -154,7 +167,7 @@ void estrategia::controle_e_navegacao()
                 repo_y[id_goleiro] = 0.0;
                 repo_y[id_zagueiro] = 0.2;
                 repo_y[id_atacante] = 0.0;
-                repo_theta[id_goleiro] = 0.0;
+                repo_theta[id_goleiro] = M_PI/2;
                 repo_theta[id_zagueiro] = 0.0;
                 repo_theta[id_atacante] = 0.0;
             } else
@@ -165,7 +178,7 @@ void estrategia::controle_e_navegacao()
                 repo_y[id_goleiro] = 0.0;
                 repo_y[id_zagueiro] = 0.25;
                 repo_y[id_atacante] = -0.25;
-                repo_theta[id_goleiro] = 0.0;
+                repo_theta[id_goleiro] = M_PI/2;
                 repo_theta[id_zagueiro] = 0.0;
                 repo_theta[id_atacante] = 0.0;
             }
@@ -173,7 +186,7 @@ void estrategia::controle_e_navegacao()
         estrategias(REPOSICIONAR);
         break;
     case VSSRef::Foul::GOAL_KICK:
-        std::cout<<"GOAL_KICK"<<'\n';
+        std::cout << Text::cyan("[Estratégia] ", true) << Text::bold("Referee - GOAL_KICK!") + '\n';
         if(nossaCor==VSSRef::Color::BLUE)
         {
             if(arbitro_comandos_cor==VSSRef::Color::BLUE)
@@ -184,7 +197,7 @@ void estrategia::controle_e_navegacao()
                 repo_y[id_goleiro] = 0.0;
                 repo_y[id_zagueiro] = 0.2;
                 repo_y[id_atacante] = -0.2;
-                repo_theta[id_goleiro] = 0.0;
+                repo_theta[id_goleiro] = M_PI/2;
                 repo_theta[id_zagueiro] = 0.0;
                 repo_theta[id_atacante] = 0.0;
 
@@ -196,7 +209,7 @@ void estrategia::controle_e_navegacao()
                 repo_y[id_goleiro] = 0.0;
                 repo_y[id_zagueiro] = 0.25;
                 repo_y[id_atacante] = -0.25;
-                repo_theta[id_goleiro] = 0.0;
+                repo_theta[id_goleiro] = M_PI/2;
                 repo_theta[id_zagueiro] = 0.0;
                 repo_theta[id_atacante] = 0.0;
             }
@@ -210,7 +223,7 @@ void estrategia::controle_e_navegacao()
                 repo_y[id_goleiro] = 0.0;
                 repo_y[id_zagueiro] = 0.2;
                 repo_y[id_atacante] = -0.2;
-                repo_theta[id_goleiro] = 0.0;
+                repo_theta[id_goleiro] = M_PI/2;
                 repo_theta[id_zagueiro] = 0.0;
                 repo_theta[id_atacante] = 0.0;
 
@@ -222,7 +235,7 @@ void estrategia::controle_e_navegacao()
                 repo_y[id_goleiro] = 0.0;
                 repo_y[id_zagueiro] = 0.25;
                 repo_y[id_atacante] = -0.25;
-                repo_theta[id_goleiro] = 0.0;
+                repo_theta[id_goleiro] = M_PI/2;
                 repo_theta[id_zagueiro] = 0.0;
                 repo_theta[id_atacante] = 0.0;
             }
@@ -230,7 +243,7 @@ void estrategia::controle_e_navegacao()
         estrategias(REPOSICIONAR);
         break;
     case VSSRef::Foul::FREE_BALL:
-        std::cout<<"FREE_BALL"<<'\n';
+        std::cout << Text::cyan("[Estratégia] ", true) << Text::bold("Referee - FREE_BALL!") + '\n';
         if(nossaCor==VSSRef::Color::BLUE)
         {
             if(arbitro_comandos_freeball==VSSRef::Quadrant::QUADRANT_1)
@@ -311,30 +324,33 @@ void estrategia::controle_e_navegacao()
         estrategias(REPOSICIONAR2);
         break;
     case VSSRef::Foul::GAME_ON:
-        std::cout<<"GAME_ON"<<"\n";
+        std::cout << Text::cyan("[Estratégia] ", true) << Text::bold("Referee - GAME_ON!") + '\n';
         estrategias(sel_estrategia);
 
         //atacante_01(1,AZUL);
         break;
     case VSSRef::Foul::KICKOFF:
-        std::cout<<"KICKOFF"<<"\n";
+        std::cout << Text::cyan("[Estratégia] ", true) << Text::bold("Referee - KICKOFF!") + '\n';
         if(nossaCor==VSSRef::Color::BLUE)
         {
 
+            //std::cout << "----- BLUE -----" <<"\n";
             repo_x[id_goleiro] = AZUL*(-0.7);
             repo_x[id_zagueiro] = AZUL*(-0.4);
             repo_x[id_atacante] = AZUL*(-0.2);
-            repo_y[id_goleiro] = 0.0;
+            repo_y[id_goleiro] = M_PI/2;
             repo_y[id_zagueiro] = 0.0;
             repo_y[id_atacante] = -0.0;
 
         }else
         {
+            //std::cout << "----- YELLOW -----" <<"\n";
+
 
             repo_x[id_goleiro] = AMARELO*(-0.7);
             repo_x[id_zagueiro] = AMARELO*(-0.4);
             repo_x[id_atacante] = AMARELO*(-0.2);
-            repo_y[id_goleiro] = 0.0;
+            repo_y[id_goleiro] = M_PI/2;
             repo_y[id_zagueiro] = 0.0;
             repo_y[id_atacante] = -0.0;
 
@@ -385,6 +401,11 @@ void estrategia::atualiza_posicoes(QVector<int> _indice, Position *_rblue_pos, d
 
 void estrategia::vai_para(int id, float x_des, float y_des)
 {
+    //Saturação da posição, vulgo sair parede!
+    float _pos[] = {x_des, y_des};
+    saturacao(_pos);
+    x_des=_pos[0];
+    y_des=_pos[1];
     //Calculos dos erros
     float d = sqrt(pow(x_des-meu_time_pos[id].x(),2)+pow(y_des-meu_time_pos[id].y(),2));
     std::cout << "Distância: "<< d << "\n";
@@ -701,6 +722,77 @@ bool estrategia::passagem_limpa(int id, float x_des, float y_des)
     return true;
 }
 
+void estrategia::fire_kick(int id)
+{
+    float vec[] = {ball_pos.x()-meu_time_pos[id].x(),ball_pos.y()-meu_time_pos[id].y()};
+    float ang_lim = 15*(M_PI/180);
+    float y_lim = 0.20;
+    angle_err th = olhar(id,ball_pos.x(),ball_pos.y());
+    float y = meu_time_pos[id].y() + vec[1]*(0.75-meu_time_pos[id].x())/vec[0];
+    if ((fabs(y)<y_lim)&(fabs(th.fi)<ang_lim))
+    {
+        vai_para(id,0.75,y);
+    }
+
+
+}
+
+void estrategia::predict_ball(int futureTime)
+{
+
+    // Depende de quantas foram inicializadas no construtor
+    // Retornarei um vetor de 3 pontos, tais que os primeiros elementos são futuros mais próximos
+    int N = 0;
+    float a = 0;     // Começo da pseudoinversão (A'A)^(-1)
+    float theta = 0; //Guarda o termo do preditor
+    float temp = 0;
+
+    //Representa quantas iterações no futuro o robô vai predizer a bola
+    //Atenção: quanto mais no futuro, mais errado, então imagine esse valor como um ganho de preditor
+    //tal que MAIOR = mais pra frente, MENOR = menos pra frente no tempo.
+
+    N = this->ballPredMemory.size()-1; // indice do ultimo elemento
+
+    ballPredPos result; //Resultado será guardado aqui.
+
+    //Atualização do vetor de memória
+    ballPredPos ballUpdate;
+    ballUpdate.x = ball_pos.x();
+    ballUpdate.y = ball_pos.y();
+
+    std::cout << "xy: "<< ballUpdate.x << "\n";
+    ballPredMemory.push_back(ballUpdate); //Adicionando novo elemento à memória
+    ballPredMemory.erase(ballPredMemory.begin()+0); //Removendo último valor da memória
+
+    //Primeiro para a posição x.
+    for (int m = 0; m < (N-1);m++)
+        a = a + pow(this->ballPredMemory[m].x,2);
+    a = 1/(a + 0.001);
+
+    for(int m = 0; m < (N-1);m++)
+        theta = theta + a * this->ballPredMemory[m].x * this->ballPredMemory[m+1].x;
+    theta = pow(theta,futureTime);
+    result.x = theta * ball_pos.x();
+
+    //Agora pra posicao y.
+    a = 0;
+    theta = 0;
+
+    for (int m = 0; m < (N-1);m++)
+        a = a + pow(this->ballPredMemory[m].y,2);
+    a = 1/(a + 0.001);
+
+    for(int m = 0; m < (N-1);m++)
+        theta = theta + a * this->ballPredMemory[m].y * this->ballPredMemory[m+1].y;
+    theta = pow(theta,futureTime);
+    result.y = theta * ball_pos.y();
+
+    //"Retorno" da função.
+    this->predictedBall = result;
+}
+
+
+
 void estrategia::atacante_01(int id, int _time)
 {
     float x_des,y_des;
@@ -726,13 +818,14 @@ void estrategia::atacante_01(int id, int _time)
         y_des = -vec[1]*passo2 + ball_pos.y();
 
         //---Saturação
-        if(fabs(x_des)>0.72)
-            x_des = 0.72*sgn(x_des);
-        if(fabs(y_des)>0.62)
-            y_des = 0.62*sgn(y_des);
+        if((abs(ball_pos.x())>0.5)&(abs(ball_pos.y())<0.35))
+        {
+            x_des = abs(x_des) > 0.5? 0.5*sgn(x_des):x_des;
+            y_des = abs(y_des) < 0.35? 0.35*sgn(y_des):y_des;
+        }
         //---
 
-        posicionamento2(id,x_des,y_des);
+        vai_para(id,x_des,y_des);
 
         if(flag_atacante2 == true)
         {
@@ -750,6 +843,13 @@ void estrategia::atacante_01(int id, int _time)
     {
         x_des = vec[0]*passo1 + ball_pos.x();
         y_des = vec[1]*passo1 + ball_pos.y();
+        //---Saturação
+        if((abs(ball_pos.x())>0.5)&(abs(ball_pos.y())<0.35))
+        {
+            x_des = abs(x_des) > 0.5? 0.5*sgn(x_des):x_des;
+            y_des = abs(y_des) < 0.35? 0.35*sgn(y_des):y_des;
+        }
+        //---
         vai_para(id,x_des,y_des);
         flag_atacante2 = true;
         std::cout << "Conduzindo a bola!" << "\n";
@@ -758,6 +858,13 @@ void estrategia::atacante_01(int id, int _time)
     {
         x_des = ball_pos.x();
         y_des = ball_pos.y();
+        //---Saturação
+        if((abs(ball_pos.x())>0.5)&(abs(ball_pos.y())<0.35))
+        {
+            x_des = abs(x_des) > 0.5? 0.5*sgn(x_des):x_des;
+            y_des = abs(y_des) < 0.35? 0.35*sgn(y_des):y_des;
+        }
+        //---
         vai_para(id,x_des,y_des);
         if (x_des*_time < meu_time_pos[id].x()*_time)
             flag_atacante3 = true;
@@ -768,6 +875,8 @@ void estrategia::atacante_01(int id, int _time)
     {
         flag_atacante3 = true;
     }
+
+    fire_kick(id);
 
 
 }
@@ -830,6 +939,180 @@ void estrategia::goleiro_01(int id, int _time, float x_, float topl)
     }
 }
 
+void estrategia::zagueiro_01(int id, int _time)
+{
+
+    int timeScale = 35 + 20*tanh(distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),ball_pos.x(),ball_pos.y())-0.3);
+
+    predict_ball(timeScale);
+
+    double x_des;
+    double y_des;
+    // _time se a gente for o lado direito, vai retornar -1
+    // _time se a gente for o lado esquerdo, vai retornar 1
+
+    // FALTA ESPELHAR
+    if(0 < ball_pos.x() && ball_pos.x() <= 0.50){  // região que o zagueiro vai atuar
+        double anguloBolaRobo = atan2(ball_pos.y()-meu_time_pos[id].y(),ball_pos.x()-meu_time_pos[id].x()); // angulo da (posiçao da bola - posiçao do robo)
+
+        double anguloBolaRobo2 = cos(anguloBolaRobo);
+
+        double anguloBolaRobo3  = (sgn(anguloBolaRobo2)); // vai pegar o sinal do valor do cosseno do anguloBolaRobo2, se for positivo quer dizer que a bola está atrás do zagueiro,
+            // tem risco de gol contra, se for negativo a bola está na frente do zagueiro, o robô pode ir com tudo
+
+        if(anguloBolaRobo3>0){ // o sgn so nao entra se for 0 entao a condicao de chutar a bola nunca chega, mas é muito difícil ficar exatamente 0
+
+            // se for positivo significa que a bola está atrás do robô (risco de gol contra), a ideia é que o robô vá para trás da bola
+
+            x_des = ball_pos.x()+0.2; // para que consiga chegar antes da bola tem que ir pra antes
+
+            if(x_des > 0.5){ // saturar para que o robô não entre na região do goleiro na tentativa de ir para trás da bola
+                x_des = 0.5;
+            }
+
+            if(ball_pos.y() >= 0.3){ // se tiver maior que 0.3m, o robô precisa ir em um y < 0.3 para deixar uma margem de segurança para ir atrás da bola
+                y_des = ball_pos.y()-0.1; // a ideia é fazer com que o robô fique rondando a bola até que ela fique na frente do robô
+            }
+            else if(0 < ball_pos.y() && ball_pos.y() < 0.3){ // aqui vai por cima
+                y_des = ball_pos.y()+0.1;
+            }
+            else if(ball_pos.y() <= -0.3){ // aqui vai por cima quando y < 0
+                y_des = ball_pos.y()+0.1;
+            }
+            else if(0 > ball_pos.y() && ball_pos.y() > -0.3){ // aqui vai por baixo quando y < 0
+                y_des = ball_pos.y()-0.1;
+            }
+
+            vai_para(id,x_des,y_des);
+        }
+        else{  // se for negativo significa que a bola está na frente do robô (pode ir com tudo)
+            x_des = ball_pos.x();
+            y_des = ball_pos.y();
+
+
+            if(distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),ball_pos.x(),ball_pos.y())<0.05){ // se o robo estiver perto da bola ele gira pra chutar a bola
+                if(ball_pos.y() >= 0)
+                    girar(id,Wmax);// a rotacao de giro muda pra jogar a bola pro meio do campo
+                else{
+                    girar(id,-Wmax);
+                }
+
+                //std::cout << anguloBolaRobo2 <<endl;
+            }
+            else{
+                vai_para(id,x_des,y_des);// se a dsitancia tier longe vai pra perto da bola
+                //std::cout << anguloBolaRobo3 <<endl;
+            }
+            /*
+                 //andarFrente(id,6);
+                 std::cout << anguloBolaRobo2 <<endl;
+
+                 std::cout << anguloBolaRobo3 <<endl;
+                */
+        }
+
+    }
+    /*
+        else if(ball_pos.x() > 0.40 && ball_pos.x() < 0.55){ // nunca entra nessa condicao pq nao tem como ser maior que 40 e menor que
+            vai_para(id,x_des,y_des);
+            girar(id,0.6);
+        }
+        */
+    else if(ball_pos.x() < 0){  // a bola está na regiao do outro time
+        //manter a posição x no meio que seria +- 25cm e ficar variando o y de acordo com o predict da bola essa desgraça
+
+        vai_para(id,0.25,predictedBall.y);
+        //std::cout << 2 <<endl;
+    }
+    else{   // a bola está no nosso time na regiao do goleiro
+        //x_des = 0.25;
+        if(ball_pos.y() > 0.38){ // se a bola tiver no canto superior
+            if(meu_time_pos[id].y() < 0.38){ // se o robô tiver abaixo do canto superior
+                if(distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),ball_pos.x(),ball_pos.y())<0.07){
+                    girar(id,Wmax); // se a bola tiver perto do robo ele gira na direcao de tirar a bola do gol
+                    //std::cout << 3 <<endl;
+                }else if(distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),ball_pos.x(),ball_pos.y())<0.3){
+                    vai_para(id,0.5,ball_pos.y()); // subir primeiro o robo vai subir no y para não entrar na regiao do gol
+                    // se tiver longe vai pra bola
+                    //std::cout << 4 <<endl;
+
+                }else{
+                    vai_para(id,0.5,ball_pos.y());
+                }
+            }
+            else{
+                if(distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),ball_pos.x(),ball_pos.y())<0.07){
+                    girar(id,Wmax);// se a bola tiver perto do robo ele gira na direcao de tirar a bola do gol
+                    std::cout << 5 <<endl;
+                }else if(distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),ball_pos.x(),ball_pos.y())<0.3){
+                    vai_para(id,ball_pos.x()+0.5,ball_pos.y()-0.05); // subir primeiro o robo vai subir no y para não entrar na regiao do gol
+                    // se tiver longe vai pra bola
+                    //std::cout << 6 <<endl;
+                }
+                else{
+                    vai_para(id,0.5,ball_pos.y());
+                }
+
+                //girar(id,0.6);
+            }
+            //std::cout << 4 <<endl;
+        }
+        else if(ball_pos.y() < -0.38){ // se a bola tiver no canto inferior
+            if(meu_time_pos[id].y() > -0.38){ // se o robô tiver fora da região do canto inferior
+                if(distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),ball_pos.x(),ball_pos.y())<0.1){
+                    girar(id,-Wmax);// se a bola tiver perto do robo ele gira na direcao de tirar a bola do gol
+                    //std::cout << 3 <<endl;
+                }else{
+                    vai_para(id,0.5,ball_pos.y()); // subir primeiro o robo vai subir no y para não entrar na regiao do gol
+                    // se tiver longe vai pra bola
+                    //std::cout << 9 <<endl;
+                }
+            }
+            else{
+                if(distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),ball_pos.x(),ball_pos.y())<0.1){
+                    girar(id,-Wmax);// se a bola tiver perto do robo ele gira na direcao de tirar a bola do gol
+                    //std::cout << 14 <<endl;
+                }else{
+                    vai_para(id,ball_pos.x(),ball_pos.y()); // subir primeiro o robo vai subir no y para não entrar na regiao do gol
+                    // se tiver longe vai pra bola
+                    //std::cout << 18 <<endl;
+                }
+            }
+        }
+
+        /*
+            if(ball_pos.y() >= 0.3){
+                y_des = ball_pos.y()-0.05; // a ideia é fazer com que o robô fique rondando a bola mas sem ficar exatamente no mesmo y para não correr o risco da bola voltar para a região do nosso gol
+            }
+            else if(0 < ball_pos.y() && ball_pos.y() < 0.3){
+                y_des = ball_pos.y()+0.05;
+            }
+            else if(0 > ball_pos.y() && ball_pos.y() >  -0.3){
+                y_des = ball_pos.y()-0.05;
+            }
+            else if(ball_pos.x() <=  -0.3){
+                y_des = ball_pos.y()+0.05;
+            }
+
+            vai_para(id,x_des,y_des); */
+    }
+
+    //   }
+
+    /* else{
+        if(0 < x < 0.55){
+
+        }
+        else if(x < 0){
+
+        }
+        else{
+
+        }
+
+    } */
+}
+
 void estrategia::estrategias(int t_estrategia)
 {
     switch (t_estrategia) {
@@ -839,10 +1122,10 @@ void estrategia::estrategias(int t_estrategia)
         goleiros(PARADO);
         break;
     case DIA_09:
-        std::cout<<"Estratégia DIA 09: Incluida!"<<"\n";
-        goleiros(GOLEIRO_01);
-        atacantes(ATACANTE_01);
-        zagueiros(ZAG_ATACANTE_01);
+        std::cout<<"Estratégia DIA 09/10!"<<"\n";
+        goleiros(sel_goleiro);
+        atacantes(sel_atacante);
+        zagueiros(sel_zagueiro);
         break;
     case REPOSICIONAR:
         for(int i=0;i<3;i++)
@@ -921,6 +1204,13 @@ void estrategia::zagueiros(int t_zagueiro)
             atacante_01(id_zagueiro,AZUL);
 
         break;
+    case ZAGUEIRO_01:
+        if(nossaCor==VSSRef::Color::YELLOW)
+            zagueiro_01(id_zagueiro,AMARELO);
+        else
+            zagueiro_01(id_zagueiro,AZUL);
+
+        break;
     default:
         break;
     }
@@ -947,7 +1237,6 @@ void estrategia::goleiros(int t_goleiro)
     }
 }
 
-
 QList<QString> estrategia::obter_estrategias()
 {
     QList<QString> aux;
@@ -972,6 +1261,7 @@ QList<QString> estrategia::obter_zagueiros()
     aux.insert(0,QString("PARADO"));
     aux.insert(1,QString("Vai Para"));
     aux.insert(2,QString("Atacante 01"));
+    aux.insert(3,QString("Zagueiro 01"));
     return aux;
 }
 

@@ -20,53 +20,53 @@ MainWindow::MainWindow(QWidget *parent)
     visionClient = new Vision(constants);
     refereeClient = new RefereeClient(constants);
 
-   //cout << constants->visionAddress().toStdString() << endl;
+    //cout << constants->visionAddress().toStdString() << endl;
 
-   // Configura botões de inicialização da comunicação com o vss-vision
-   connect(ui->iniciar,SIGNAL(clicked(bool)),visionClient,SLOT(initialization()));
-   connect(ui->finalizar,SIGNAL(clicked(bool)),visionClient,SLOT(finalization()));
-   // Detector de recebimento de dados da visão (pode ser o mesmo frame)
-   connect(visionClient,SIGNAL(visionUpdated()),this,SLOT(updateData()));
-   //Atualização da informação do FPS (Opicional)
-   connect(cronometro2,SIGNAL(timeout()),this,SLOT(updateFPS()));
-   cronometro2->start(1e2);
+    // Configura botões de inicialização da comunicação com o vss-vision
+    connect(ui->iniciar,SIGNAL(clicked(bool)),visionClient,SLOT(initialization()));
+    connect(ui->finalizar,SIGNAL(clicked(bool)),visionClient,SLOT(finalization()));
+    // Detector de recebimento de dados da visão (pode ser o mesmo frame)
+    connect(visionClient,SIGNAL(visionUpdated()),this,SLOT(updateData()));
+    //Atualização da informação do FPS (Opicional)
+    connect(cronometro2,SIGNAL(timeout()),this,SLOT(updateFPS()));
+    cronometro2->start(1e2);
 
 
-   //Configura os botões da comunicação com o árbitro
-   connect(ui->iniciar_2,SIGNAL(clicked(bool)),refereeClient,SLOT(connectToNetwork()));
-   connect(ui->finalizar_2,SIGNAL(clicked(bool)),refereeClient,SLOT(disconnectFromNetwork()));
-   //Configura conexão para recebimento de comando do árbitro
-   connect(refereeClient,SIGNAL(new_command()),this,SLOT(updateReferee()));
+    //Configura os botões da comunicação com o árbitro
+    connect(ui->iniciar_2,SIGNAL(clicked(bool)),refereeClient,SLOT(connectToNetwork()));
+    connect(ui->finalizar_2,SIGNAL(clicked(bool)),refereeClient,SLOT(disconnectFromNetwork()));
+    //Configura conexão para recebimento de comando do árbitro
+    connect(refereeClient,SIGNAL(new_command()),this,SLOT(updateReferee()));
 
-   //Cria o objeto para comunicação
-   SerialComm = new communication();
-   info_ports();
-   // Define as configurações de plot
-   Defplot();
-   tipo_plot = 0;objeto_plot = 0;cor_plot = 0;
+    //Cria o objeto para comunicação
+    SerialComm = new communication();
+    info_ports();
+    // Define as configurações de plot
+    Defplot();
+    tipo_plot = 0;objeto_plot = 0;cor_plot = 0;
 
-   //Cria os objetos para estratégia
-   azul = new estrategia(VSSRef::BLUE);
-   amarelo = new estrategia(VSSRef::YELLOW);
-   time_estrategia = VSSRef::BLUE; //Configurável via interface
+    //Cria os objetos para estratégia
+    azul = new estrategia(VSSRef::BLUE);
+    amarelo = new estrategia(VSSRef::YELLOW);
+    time_estrategia = VSSRef::BLUE; //Configurável via interface
 
-   //Atuliza menu da estratégia
-   for(int i=0;i<amarelo->obter_estrategias().size();i++)
-   {
-       ui->sel_estrategia->addItem(amarelo->obter_estrategias().at(i));
-   }
-   for(int i=0;i<amarelo->obter_atacantes().size();i++)
-   {
-       ui->sel_atacante->addItem(amarelo->obter_atacantes().at(i));
-   }
-   for(int i=0;i<amarelo->obter_zagueiros().size();i++)
-   {
-       ui->sel_zagueiro->addItem(amarelo->obter_zagueiros().at(i));
-   }
-   for(int i=0;i<amarelo->obter_goleiros().size();i++)
-   {
-       ui->sel_goleiro->addItem(amarelo->obter_goleiros().at(i));
-   }
+    //Atuliza menu da estratégia
+    for(int i=0;i<amarelo->obter_estrategias().size();i++)
+    {
+        ui->sel_estrategia->addItem(amarelo->obter_estrategias().at(i));
+    }
+    for(int i=0;i<amarelo->obter_atacantes().size();i++)
+    {
+        ui->sel_atacante->addItem(amarelo->obter_atacantes().at(i));
+    }
+    for(int i=0;i<amarelo->obter_zagueiros().size();i++)
+    {
+        ui->sel_zagueiro->addItem(amarelo->obter_zagueiros().at(i));
+    }
+    for(int i=0;i<amarelo->obter_goleiros().size();i++)
+    {
+        ui->sel_goleiro->addItem(amarelo->obter_goleiros().at(i));
+    }
 
 
 }
