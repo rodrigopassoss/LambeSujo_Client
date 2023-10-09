@@ -338,7 +338,7 @@ void estrategia::controle_e_navegacao()
             repo_x[id_goleiro] = AZUL*(-0.7);
             repo_x[id_zagueiro] = AZUL*(-0.4);
             repo_x[id_atacante] = AZUL*(-0.2);
-            repo_y[id_goleiro] = M_PI/2;
+            repo_y[id_goleiro] = 0.0;
             repo_y[id_zagueiro] = 0.0;
             repo_y[id_atacante] = -0.0;
 
@@ -350,7 +350,7 @@ void estrategia::controle_e_navegacao()
             repo_x[id_goleiro] = AMARELO*(-0.7);
             repo_x[id_zagueiro] = AMARELO*(-0.4);
             repo_x[id_atacante] = AMARELO*(-0.2);
-            repo_y[id_goleiro] = M_PI/2;
+            repo_y[id_goleiro] = 0.0;
             repo_y[id_zagueiro] = 0.0;
             repo_y[id_atacante] = -0.0;
 
@@ -359,6 +359,10 @@ void estrategia::controle_e_navegacao()
         break;
     default:
         std::cout<<"SEM ARBITRO!"<<"\n";
+        /*vL[0] = 0.5;
+        vL[1] = 0.5;
+        vL[2] = 0.5;*/
+
         break;
     }
 
@@ -722,19 +726,18 @@ bool estrategia::passagem_limpa(int id, float x_des, float y_des)
     return true;
 }
 
-void estrategia::fire_kick(int id)
+void estrategia::fire_kick(int id, int _time)
 {
     float vec[] = {ball_pos.x()-meu_time_pos[id].x(),ball_pos.y()-meu_time_pos[id].y()};
     float ang_lim = 15*(M_PI/180);
     float y_lim = 0.20;
     angle_err th = olhar(id,ball_pos.x(),ball_pos.y());
-    float y = meu_time_pos[id].y() + vec[1]*(0.75-meu_time_pos[id].x())/vec[0];
+    float y = meu_time_pos[id].y() + vec[1]*(_time*0.75-meu_time_pos[id].x())/vec[0];
     if ((fabs(y)<y_lim)&(fabs(th.fi)<ang_lim))
     {
-        vai_para(id,0.75,y);
+        std::cout << "FIRE_KICK" << "\n";
+        vai_para(id,_time*0.75,y);
     }
-
-
 }
 
 void estrategia::predict_ball(int futureTime)
@@ -876,7 +879,7 @@ void estrategia::atacante_01(int id, int _time)
         flag_atacante3 = true;
     }
 
-    fire_kick(id);
+    fire_kick(id, _time);
 
 
 }
@@ -950,24 +953,21 @@ void estrategia::zagueiro_01(int id, int _time)
     double y_des;
     // _time se a gente for o lado direito, vai retornar -1
     // _time se a gente for o lado esquerdo, vai retornar 1
-
     // FALTA ESPELHAR
-    if(0 < ball_pos.x() && ball_pos.x() <= 0.50){  // região que o zagueiro vai atuar
+    if(0 > ball_pos.x()*_time && ball_pos.x()*_time >= -0.50){  // região que o zagueiro vai atuar
         double anguloBolaRobo = atan2(ball_pos.y()-meu_time_pos[id].y(),ball_pos.x()-meu_time_pos[id].x()); // angulo da (posiçao da bola - posiçao do robo)
 
         double anguloBolaRobo2 = cos(anguloBolaRobo);
 
-        double anguloBolaRobo3  = (sgn(anguloBolaRobo2)); // vai pegar o sinal do valor do cosseno do anguloBolaRobo2, se for positivo quer dizer que a bola está atrás do zagueiro,
+        double anguloBolaRobo3  = (sgn(anguloBolaRobo2))*_time; // vai pegar o sinal do valor do cosseno do anguloBolaRobo2, se for positivo quer dizer que a bola está atrás do zagueiro,
             // tem risco de gol contra, se for negativo a bola está na frente do zagueiro, o robô pode ir com tudo
-
-        if(anguloBolaRobo3>0){ // o sgn so nao entra se for 0 entao a condicao de chutar a bola nunca chega, mas é muito difícil ficar exatamente 0
-
+        if(anguloBolaRobo3<0){ // o sgn so nao entra se for 0 entao a condicao de chutar a bola nunca chega, mas é muito difícil ficar exatamente 0
             // se for positivo significa que a bola está atrás do robô (risco de gol contra), a ideia é que o robô vá para trás da bola
 
-            x_des = ball_pos.x()+0.2; // para que consiga chegar antes da bola tem que ir pra antes
+            x_des = ball_pos.x()-0.2*_time; // para que consiga chegar antes da bola tem que ir pra antes
 
-            if(x_des > 0.5){ // saturar para que o robô não entre na região do goleiro na tentativa de ir para trás da bola
-                x_des = 0.5;
+            if(x_des*_time < -0.5){ // saturar para que o robô não entre na região do goleiro na tentativa de ir para trás da bola
+                x_des = -0.5*_time;
             }
 
             if(ball_pos.y() >= 0.3){ // se tiver maior que 0.3m, o robô precisa ir em um y < 0.3 para deixar uma margem de segurança para ir atrás da bola
@@ -992,23 +992,17 @@ void estrategia::zagueiro_01(int id, int _time)
 
             if(distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),ball_pos.x(),ball_pos.y())<0.05){ // se o robo estiver perto da bola ele gira pra chutar a bola
                 if(ball_pos.y() >= 0)
-                    girar(id,Wmax);// a rotacao de giro muda pra jogar a bola pro meio do campo
+                    girar(id,-Wmax*_time);// a rotacao de giro muda pra jogar a bola pro meio do campo
                 else{
-                    girar(id,-Wmax);
+                    girar(id,Wmax*_time);
                 }
 
-                //std::cout << anguloBolaRobo2 <<endl;
+                //cout << anguloBolaRobo2 <<endl;
             }
             else{
                 vai_para(id,x_des,y_des);// se a dsitancia tier longe vai pra perto da bola
-                //std::cout << anguloBolaRobo3 <<endl;
+                //cout << anguloBolaRobo3 <<endl;
             }
-            /*
-                 //andarFrente(id,6);
-                 std::cout << anguloBolaRobo2 <<endl;
-
-                 std::cout << anguloBolaRobo3 <<endl;
-                */
         }
 
     }
@@ -1018,99 +1012,64 @@ void estrategia::zagueiro_01(int id, int _time)
             girar(id,0.6);
         }
         */
-    else if(ball_pos.x() < 0){  // a bola está na regiao do outro time
-        //manter a posição x no meio que seria +- 25cm e ficar variando o y de acordo com o predict da bola essa desgraça
+    else if(ball_pos.x()*_time > 0){  // a bola está na regiao do outro time
+        //manter a posição x no meio que seria +- 25cm e ficar variando o y de acordo com o predict da bola essa ...
 
-        vai_para(id,0.25,predictedBall.y);
-        //std::cout << 2 <<endl;
+        vai_para(id,-0.25*_time,predictedBall.y);
     }
     else{   // a bola está no nosso time na regiao do goleiro
         //x_des = 0.25;
+
+        // COMENTARIO VISTO
+        // mudar a condicao ele tem que ir pros cantos
+        // COMENTARIO VISTO
+
         if(ball_pos.y() > 0.38){ // se a bola tiver no canto superior
             if(meu_time_pos[id].y() < 0.38){ // se o robô tiver abaixo do canto superior
                 if(distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),ball_pos.x(),ball_pos.y())<0.07){
-                    girar(id,Wmax); // se a bola tiver perto do robo ele gira na direcao de tirar a bola do gol
-                    //std::cout << 3 <<endl;
+                    girar(id,-Wmax*_time); // se a bola tiver perto do robo ele gira na direcao de tirar a bola do gol
                 }else if(distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),ball_pos.x(),ball_pos.y())<0.3){
-                    vai_para(id,0.5,ball_pos.y()); // subir primeiro o robo vai subir no y para não entrar na regiao do gol
+                    vai_para(id,-0.5*_time,ball_pos.y()); // subir primeiro o robo vai subir no y para não entrar na regiao do gol
                     // se tiver longe vai pra bola
-                    //std::cout << 4 <<endl;
 
                 }else{
-                    vai_para(id,0.5,ball_pos.y());
+                    vai_para(id,-0.5*_time,ball_pos.y());
                 }
             }
             else{
                 if(distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),ball_pos.x(),ball_pos.y())<0.07){
-                    girar(id,Wmax);// se a bola tiver perto do robo ele gira na direcao de tirar a bola do gol
-                    std::cout << 5 <<endl;
+                    girar(id,-Wmax*_time);// se a bola tiver perto do robo ele gira na direcao de tirar a bola do gol
                 }else if(distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),ball_pos.x(),ball_pos.y())<0.3){
-                    vai_para(id,ball_pos.x()+0.5,ball_pos.y()-0.05); // subir primeiro o robo vai subir no y para não entrar na regiao do gol
+                    vai_para(id,ball_pos.x()-0.5*_time,ball_pos.y()-0.05); // subir primeiro o robo vai subir no y para não entrar na regiao do gol
                     // se tiver longe vai pra bola
-                    //std::cout << 6 <<endl;
                 }
                 else{
-                    vai_para(id,0.5,ball_pos.y());
+                    vai_para(id,-0.5*_time,ball_pos.y());
                 }
 
                 //girar(id,0.6);
             }
-            //std::cout << 4 <<endl;
+            //cout << 4 <<endl;
         }
         else if(ball_pos.y() < -0.38){ // se a bola tiver no canto inferior
             if(meu_time_pos[id].y() > -0.38){ // se o robô tiver fora da região do canto inferior
                 if(distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),ball_pos.x(),ball_pos.y())<0.1){
-                    girar(id,-Wmax);// se a bola tiver perto do robo ele gira na direcao de tirar a bola do gol
-                    //std::cout << 3 <<endl;
+                    girar(id,Wmax*_time);// se a bola tiver perto do robo ele gira na direcao de tirar a bola do gol
                 }else{
-                    vai_para(id,0.5,ball_pos.y()); // subir primeiro o robo vai subir no y para não entrar na regiao do gol
+                    vai_para(id,-0.5*_time,ball_pos.y()); // subir primeiro o robo vai subir no y para não entrar na regiao do gol
                     // se tiver longe vai pra bola
-                    //std::cout << 9 <<endl;
                 }
             }
             else{
                 if(distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),ball_pos.x(),ball_pos.y())<0.1){
-                    girar(id,-Wmax);// se a bola tiver perto do robo ele gira na direcao de tirar a bola do gol
-                    //std::cout << 14 <<endl;
+                    girar(id,Wmax*_time);// se a bola tiver perto do robo ele gira na direcao de tirar a bola do gol
                 }else{
                     vai_para(id,ball_pos.x(),ball_pos.y()); // subir primeiro o robo vai subir no y para não entrar na regiao do gol
                     // se tiver longe vai pra bola
-                    //std::cout << 18 <<endl;
                 }
             }
         }
-
-        /*
-            if(ball_pos.y() >= 0.3){
-                y_des = ball_pos.y()-0.05; // a ideia é fazer com que o robô fique rondando a bola mas sem ficar exatamente no mesmo y para não correr o risco da bola voltar para a região do nosso gol
-            }
-            else if(0 < ball_pos.y() && ball_pos.y() < 0.3){
-                y_des = ball_pos.y()+0.05;
-            }
-            else if(0 > ball_pos.y() && ball_pos.y() >  -0.3){
-                y_des = ball_pos.y()-0.05;
-            }
-            else if(ball_pos.x() <=  -0.3){
-                y_des = ball_pos.y()+0.05;
-            }
-
-            vai_para(id,x_des,y_des); */
     }
-
-    //   }
-
-    /* else{
-        if(0 < x < 0.55){
-
-        }
-        else if(x < 0){
-
-        }
-        else{
-
-        }
-
-    } */
 }
 
 void estrategia::estrategias(int t_estrategia)
@@ -1205,6 +1164,7 @@ void estrategia::zagueiros(int t_zagueiro)
 
         break;
     case ZAGUEIRO_01:
+        std::cout << "Zagueiro 01" << "\n";
         if(nossaCor==VSSRef::Color::YELLOW)
             zagueiro_01(id_zagueiro,AMARELO);
         else
