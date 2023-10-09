@@ -69,7 +69,7 @@ public:
     void converte_vetor(float V[],float raio);
     void saturacao(float _pos[]);
     bool passagem_limpa(int id,float x_des, float y_des);
-    void fire_kick(int id);
+    void fire_kick(int id, int _time);
     void predict_ball(int futureTime=50);
     std::vector<ballPredPos> ballPredMemory; //Vetor de memória com posições passadas
     ballPredPos predictedBall; //Inicializado no construtor
