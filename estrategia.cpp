@@ -11,7 +11,7 @@ estrategia::estrategia(int time)
     L = 3.75e-2; //Distância entre roda e centro
     R = 3.035e-2; /*3.035e-2 m*/
     vrMax = 40.0;  // rad/s
-    Vmax = ((40.0*R)/1.333); // 1.31 m/s
+    Vmax = ((40.0*R)/2.0); // 1.31 m/s
     Wmax = (40.0*(R/L))/7.0; // 35.0 rad/s
 
     for(int i=0;i<qtdRobos;i++)
@@ -419,7 +419,7 @@ void estrategia::vai_para(int id, float x_des, float y_des)
     std::cout << "Erro angular: "<< err.fi << "\n";
 
     //constantes do controle
-    float kv = 2.5; float kw = 0.66;
+    float kv = 4.5; float kw = 0.66;
     //Controle linear
     float V = Vmax*tanh(kv*d*err.flag);
     //Controle angular
@@ -740,6 +740,8 @@ void estrategia::fire_kick(int id, int _time)
     {
         std::cout << Text::cyan("[Estratégia] ", true) << Text::bold("FIRE KICK!!!") + '\n';
         vai_para(id,_time*0.75,y);
+        vL[id] = 1*th.flag;
+        vR[id] = 1*th.flag;
     }
 }
 
@@ -886,6 +888,10 @@ void estrategia::atacante_01(int id, int _time)
         flag_atacante3 = true;
     }
 
+    if(ball_pos.x()>0)
+    {
+        vai_para(id,0.0,ball_pos.y()-0.15*sgn(ball_pos.y()));
+    }
     fire_kick(id, _time);
 
 
@@ -948,6 +954,7 @@ void estrategia::goleiro_01(int id, int _time, float x_, float topl)
 
     }
 }
+
 
 void estrategia::zagueiro_01(int id, int _time)
 {
@@ -1077,6 +1084,7 @@ void estrategia::zagueiro_01(int id, int _time)
             }
         }
     }
+    fire_kick(id,_time);
 }
 
 void estrategia::estrategias(int t_estrategia)
