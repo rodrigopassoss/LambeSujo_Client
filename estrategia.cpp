@@ -677,6 +677,26 @@ void estrategia::calc_repulsao2(int id, float F[], bool flag){
     }
 }
 
+void estrategia::saturacao(vector <double> *V){
+    //limites de x e y
+    double lim_x = 0.68;
+    double lim_y = 0.58;
+
+    //Satura as posições enviadas
+    if (V->at(0) > lim_x)
+        V->at(0) = lim_x;
+
+    if (V->at(0) < -lim_x)
+        V->at(0) = -lim_x;
+
+    if (V->at(1) > lim_y)
+        V->at(1) = lim_y;
+
+    if (V->at(1) < -lim_y)
+        V->at(1) = -lim_y;
+}
+
+
 void estrategia::saturacao(float _pos[]){
     //limites de x e y
     float lim_x = 0.68;
@@ -729,19 +749,60 @@ bool estrategia::passagem_limpa(int id, float x_des, float y_des)
     return true;
 }
 
-void estrategia::fire_kick(int id, int _time)
+void estrategia::fire_kick(int id,int _time)
 {
-    float vec[] = {ball_pos.x()-meu_time_pos[id].x(),ball_pos.y()-meu_time_pos[id].y()};
-    float ang_lim = 15*(M_PI/180);
-    float y_lim = 0.20;
-    angle_err th = olhar(id,ball_pos.x(),ball_pos.y());
-    float y = meu_time_pos[id].y() + vec[1]*(_time*0.75-meu_time_pos[id].x())/vec[0];
-    if ((fabs(y)<y_lim)&(fabs(th.fi)<ang_lim))
-    {
-        std::cout << Text::cyan("[Estratégia] ", true) << Text::bold("FIRE KICK!!!") + '\n';
-        vai_para(id,_time*0.75,y);
-        vL[id] = 1*th.flag;
-        vR[id] = 1*th.flag;
+    double lim_x = 0.8; //Posicao x do centro do gol
+    double lim_y = 0.17; //Define a localização do gol em y
+    double distancia_posse = 0.1; //Distância que o robô considera que ele tem posse da bola
+    double lim_ang = 0.1; //Pra quando a bola estiver longe
+    double lim_ang_perto = 0.78; //Pra quando a bola estiver perto
+    double dist_ball_rb[2] = {ball_pos.x() - meu_time_pos[id].x(),ball_pos.y() - meu_time_pos[id].y()}; //0 é x, 1 é y
+    double dist_gol_rb[2] = {_time*lim_x - meu_time_pos[id].x(),lim_y - meu_time_pos[id].y()};
+    double Y = dist_gol_rb[0]*tan(meu_time_ori[id]) + meu_time_pos[id].y();
+    double alvo_projetado[2] = {lim_x,Y};
+    //posicao alvo: [lim_x, Y] -> a projeção de onde o robô tá olhando
+
+    double ang_rb_bola = atan2(dist_ball_rb[1],dist_ball_rb[0]);
+    angle_err angulo = olhar(id, ball_pos.x(), ball_pos.y()); //Angulo pra bola
+    angle_err angulo_alvo = olhar(id,alvo_projetado[0],alvo_projetado[1]);
+
+    bool flag = true;
+    bool flag_lateral = false;
+    flag_lateral = (((_time==-1)&&(meu_time_pos[id].x()>ball_pos.x()))||(meu_time_pos[id].x()<ball_pos.x()));
+    double x = distancia(meu_time_pos[id].x(),meu_time_pos[id].y(), ball_pos.x(), ball_pos.y());
+
+    lim_ang = cos(x)*atan2(sqrt(0.04*(1-(x*x/4))),x); //elipse era 0.06
+    //lim_ang = 1.57-1.47*x;
+    //cout << "ID: "<< id << "lim_ang: "<<lim_ang <<endl;
+
+    /*if (distancia(rb,ball.x(),ball.y()) < distancia_posse) {
+        //Se a bola tiver muito perto, é importante aumentar o angulo
+        lim_ang = lim_ang_perto;
+    }*/
+
+    /*cout << "Orientacao: " << rb.orientation() << "Angulo pra bola: " << angulo.fi << endl;
+    cout << "Y de projecao: " << Y << endl;*/
+
+    //Se o robô estiver olhando pro gol
+    if (Y >= -lim_y && Y<= lim_y){
+        //cout<<"Olhando pro gol"<<endl;
+        //Se o robo estiver olhando pra bola
+        if( (flag_lateral) && (fabs(angulo.fi*M_PI/180) <= lim_ang)){
+            //cout<<"FIRE!"<<endl;
+            vR[id] = angulo.flag*150;
+            vL[id]  = angulo.flag*150;
+            bandeira = false;
+            flag = false;
+        }else{
+            //cout<<"Olhando pro gol mas não pra bola"<<endl;
+            bandeira = true;
+        }
+    }else{
+        //cout<<"Não estou olhando pro gol"<<endl;
+        bandeira = true;
+    }
+    if(flag){
+        //andarFrente(0,id);
     }
 }
 
@@ -1086,6 +1147,536 @@ void estrategia::zagueiro_01(int id, int _time)
     }
     fire_kick(id,_time);
 }
+void estrategia::goleiro_02(int id, int _time){
+    // Atualização do GoleiroPetersson2 para evitar o penalty com a bola parada dentro da área
+    double top_limit = 0.17; //largura do gol/2
+    double x_desejado = -0.7*_time;
+    double delta = 0.01; // pra impedir que ele fique sambando parado no gol
+    double velocidade = 2.5;
+    double dist = distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),ball_pos.x(),ball_pos.y());
+    std::vector <double> new_pos = {0,0};
+
+    int timeScale = 55;
+
+    predict_ball(timeScale);
+
+    //se a bola estiver longe do goleiro utiliza o preditor para ajeitar sua posição
+    if ( dist > 0.3){  // diatancia para bola
+        new_pos = {predictedBall.x,predictedBall.y};
+        //new_pos = {ball_pos.x(),ball_pos.y()};
+    }else{
+        new_pos = {ball_pos.x(),ball_pos.y()};
+    }
+
+    double dist_ball = distancia(x_desejado,top_limit,-0.63*_time,0.36); // distancia para quina da area
+
+    //se a bola estiver estiver nos cantos ele avanca nela
+    if(dist < dist_ball && ball_pos.x() > meu_time_pos[id].x() && meu_time_pos[id].x() < -0.63 && (ball_pos.y() > top_limit || ball_pos.y() < -top_limit) && _time == 1){
+        vai_para(id,new_pos[0],new_pos[1]);
+    }
+    else if(dist < dist_ball && ball_pos.x() < meu_time_pos[id].x() && meu_time_pos[id].x() > 0.63 && (ball_pos.y() > top_limit || ball_pos.y() < -top_limit) && _time == -1){
+        vai_para(id,new_pos[0],new_pos[1]);
+    }
+    else{
+
+        //Verifica se o robô está perto do centro do gol
+        /*if(distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),x_desejado,meu_time_pos[id].y())>= 0.02 ){
+            cout << "ENTREIIIIII 3 " << endl;
+            double teste = distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),x_desejado,meu_time_pos[id].y());
+            cout << teste <<endl;
+            vai_para(id,x_desejado,((top_limit*1.5)*ball_pos.y())/abs(ball_pos.y())); // vai para o canto do gol
+
+        }*/
+
+
+        //else{ //organiza a orientacao e movimentacao do goleiro sob a linha de gol
+
+        //condicao para corrigir orientacao
+        //if(distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),ball_pos.x(),ball_pos.y())>= 0.2){
+        //olhar(id,x_desejado,0.18*_time);
+        //    cout << "OI " << endl;
+        //    vai_para(id,x_desejado,ball_pos.y());
+        //    olhar(id,x_desejado,(meu_time_pos[id].y()+0.1)*_time);
+
+        //}
+        /*
+            angle_err angulo = olhar(id,meu_time_pos[id].x(),top_limit + 0); // calcula diferença entre angulo atual e angulo desejado
+            if(angulo.fi >= 0.5 || angulo.fi<= -0.5){ //se o robô não está aproximadamente 90 graus
+                //andarFrente(id,0);
+                olhar_para(id,angulo.fi);
+                cout << "ENTREIIIIII 4a " << endl;
+            }
+
+            else if(meu_time_pos[id].y() < top_limit && meu_time_pos[id].y() + delta < new_pos[1]){ //robô abaixo da bola
+                cout << "ENTREIIIIII 4b " << endl;
+                if(angulo.flag == 1){
+                    andarFrente(id,Vmax);
+                }
+                else{
+                    andarFrente(id,-Vmax);
+                }
+            }
+            else if(meu_time_pos[id].y() > -top_limit && meu_time_pos[id].y() - delta > new_pos[1]){ //robô acima da bola
+                cout << "ENTREIIIIII 4c " << endl;
+                if(angulo.flag == 1){
+                    andarFrente(id,-Vmax);
+                }
+                else{
+                    andarFrente(id,Vmax);
+                }
+            }
+            else{
+                cout << "ENTREIIIIII 4d " << endl;
+                andarFrente(id,0);
+            }
+            */
+        //*
+        if(meu_time_pos[id].y() < top_limit && meu_time_pos[id].y() < new_pos[1]){ //robô abaixo da bola
+            vai_para(id,x_desejado,new_pos[1]);
+            olhar(id,x_desejado,0.18);
+        }
+        else if(meu_time_pos[id].y() > -top_limit && meu_time_pos[id].y() > new_pos[1]){ //robô acima da bola
+            vai_para(id,x_desejado,new_pos[1]);
+            olhar(id,x_desejado,0.18);
+        }
+        else{
+            //andarFrente(id,0.0);
+            vai_para(id,x_desejado,((top_limit*1.5)*ball_pos.y())/abs(ball_pos.y())); // vai para o canto do gol
+        }
+
+
+
+        //*/
+        //gira se a bola estiver muito perto do goleiro
+        if (distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),new_pos[0],new_pos[1]) < 0.06){  //0.07
+            //cout << "ENTREIIIIII 5 " << endl;
+            if (((meu_time_pos[id].y()>0)&&(predictedBall.y>meu_time_pos[id].y()+0.01))||((meu_time_pos[id].y()<0)&&(predictedBall.y<meu_time_pos[id].y()-0.01)))
+            { //Só chuta se a bola não tiver a caminho de entrar no gol (condicao nova pos unball)
+                //cout << "ENTREIIIIII 5a " << endl;
+                if((ball_pos.y() < meu_time_pos[id].y() && _time == 1)){ // Azul
+                    girar(id,Wmax);
+                }
+                if((ball_pos.y() > meu_time_pos[id].y() && _time == -1)){ // Amarelo
+                    girar(id,Wmax);
+                }
+                if((ball_pos.y() > meu_time_pos[id].y() && _time == 1)){ // Azul
+                    girar(id,-Wmax);
+                }
+                if((ball_pos.y() < meu_time_pos[id].y() && _time == -1)){ // Amarelo
+                    girar(id,-Wmax);
+                }
+            }
+        }
+        //}
+
+
+    }
+
+}
+
+void estrategia::atacante_02(int id, int idzag, int _time)
+{
+
+    int timeScale = 35 + 20*tanh(distancia(meu_time_pos[id].x(),meu_time_pos[id].y(),ball_pos.x(),ball_pos.y())-0.3);
+
+    predict_ball(timeScale);
+
+    double alpha = M_PI/8;
+    double meioGolx = 0.75*_time;
+    double golSup = 0.17;
+    double goalInf = -0.17;
+    double beta  = atan2(meu_time_pos[id].x() - meioGolx , meu_time_pos[id].y());
+    double gamma = atan2(meu_time_pos[id].x() - ball_pos.x() , meu_time_pos[id].y() - ball_pos.y());
+    double roh   = atan2(golSup - meu_time_pos[id].x(), golSup - meu_time_pos[id].y());
+    double omega = atan2(goalInf - meu_time_pos[id].x(), goalInf - meu_time_pos[id].y());
+    int K = round(beta/alpha);
+    double gain;
+    //double resultante_2 = {0,0};
+
+    if(K<2)
+        gain = 0.4;
+    else if(K>=2 && K <= 3)
+        gain = 0.35;
+    else if(K>3 && K < 5)
+        gain = 0.4;
+    else if(K>=5 && K < 7)
+        gain = 0.35;
+    else
+        gain = 0.4;
+
+    delete resultante_2;
+    resultante_2 = new vector<double>();
+
+    //Determinação da origem do vetor resultante
+    resultante_2->push_back(meu_time_pos[id].x());
+    resultante_2->push_back(meu_time_pos[id].y());
+
+    //distância atacante-bola
+    double dist =  sqrt(pow(ball_pos.x()-meu_time_pos[id].x(),2.0)+pow( ball_pos.y()-meu_time_pos[id].y(),2.0));
+    //Distancia do zagueiro até a bola
+    double zag_dist = sqrt(pow(ball_pos.x()-meu_time_pos[idzag].x(),2.0)+pow( ball_pos.y()-meu_time_pos[idzag].y(),2.0));
+
+    double componenteX;
+    double componenteY;
+
+    double k = dist;
+    if(dist < 0.2)
+        k  = 0.2;
+
+    (*resultante_2)[0]+=-k*sin(gamma);
+    (*resultante_2)[1]+=-k*cos(gamma);
+
+
+    if(_time == 1){//azul
+
+
+        if(ball_pos.x() < meu_time_pos[id].x())
+        {
+            int a = 0;
+            //Consideração do vetor de predição
+            if(abs(ball_pos.y()-meu_time_pos[id].y()) > 0.3)
+                a = 1;
+            else if(abs(ball_pos.y()-meu_time_pos[id].y()) < 0.06 && dist < 0.2)
+            {
+                (*resultante_2)[0]=meu_time_pos[id].x();
+                (*resultante_2)[1]=meu_time_pos[id].y();
+            }
+
+            int c = 0;
+            if((ball_pos.x()/meu_time_pos[id].x()<1 && ball_pos.x()/meu_time_pos[id].x()>0.8) && abs(ball_pos.y()-meu_time_pos[id].y()) > 0.1)
+                c = 1;
+
+
+            double repulsivoX;
+            double repulsivoY;
+
+            if(ball_pos.y() > meu_time_pos[id].y())
+            {
+                repulsivoX = (c*0.1 + 0.1)*sin(0 + (c*0.5*M_PI));
+                repulsivoY = (c*0.1 + 0.1)*cos(0 + (c*0.5*M_PI));
+            }else
+            {
+                repulsivoX = (c*0.1+0.1)*sin(M_PI-(c*0.5*M_PI));
+                repulsivoY = (c*0.1+0.1)*cos(M_PI-(c*0.5*M_PI));
+            }
+            //Componentes do Vetor direção
+            double angle = atan2(ball_pos.x()-predictedBall.x,ball_pos.y()-predictedBall.y);
+            componenteX = /*-c*ball_pos.x()*/ -  a*0.1*sin(angle) - repulsivoX;
+            componenteY = /*-c*ball_pos.y()*/ -  a*0.1*cos(angle) - repulsivoY;
+
+            (*resultante_2)[0]+= componenteX;
+            (*resultante_2)[1]+= componenteY;
+
+        }else
+        {
+
+            if(dist < 0.08)
+            {
+                (*resultante_2)[0]+=-gain*sin(beta+M_PI);
+                (*resultante_2)[1]+=-gain*cos(beta+M_PI);
+            }
+
+            else{
+                if((ball_pos.x() < 0.6 && ball_pos.y() < -0.2)&& (meu_time_pos[id].y() > ball_pos.y())/*&&(abs(ball_pos.y()-blue[id].x())>0.07)*/)
+                {
+                    //Vetor de corrção
+                    componenteX = /*ball_pos.x()*/ -  0.1*sin(atan2(ball_pos.x() - meioGolx,ball_pos.y() - 0.0)/*+M_PI*/);
+                    componenteY = /*ball_pos.y()*/ -  0.1*cos(atan2(ball_pos.x() - meioGolx,ball_pos.y() - 0.0)/*+M_PI*/);
+
+                    (*resultante_2)[0]+=componenteX;
+                    (*resultante_2)[1]+=componenteY;
+
+                }
+                else if((ball_pos.x() < 0.6 && ball_pos.y() > 0.2)&&(meu_time_pos[id].y() < ball_pos.y())/*&&(abs(ball_pos.y()-blue[id].x())>0.07)*/)
+                {
+                    //Vetor de corrção
+                    componenteX = /*ball_pos.x()*/ -  0.1*sin(atan2(ball_pos.x() - meioGolx,ball_pos.y() - 0.0)/*+M_PI*/);
+                    componenteY = /*ball_pos.y()*/ -  0.1*cos(atan2(ball_pos.x() - meioGolx,ball_pos.y() - 0.0)/*+M_PI*/);
+
+                    (*resultante_2)[0]+=componenteX;
+                    (*resultante_2)[1]+=componenteY;
+
+                }
+                else if(dist > 0.2)
+                {
+                    (*resultante_2)[0]+= -0.1*sin(atan2(ball_pos.x() - meioGolx,ball_pos.y() - 0.0));
+                    (*resultante_2)[1]+= -0.1*cos(atan2(ball_pos.x() - meioGolx,ball_pos.y() - 0.0));
+                }
+                //atualização
+                if(((ball_pos.y()>0.25 && ball_pos.y()<0.6) && ball_pos.x() > 0.6 && meu_time_pos[id].x() >= ball_pos.x() && meu_time_pos[id].y()>0.25 && meu_time_pos[id].y()<ball_pos.y())
+                    ||( (ball_pos.y()<-0.25 && ball_pos.y()>-0.6) && ball_pos.x() > 0.6 && meu_time_pos[id].x() >= ball_pos.x() && meu_time_pos[id].y()<-0.25 && meu_time_pos[id].y()>ball_pos.y()))
+                {
+                    (*resultante_2)[0]+= -0.1*sin(M_PI/2);
+                    (*resultante_2)[1]+= -0.1*cos(M_PI/2);
+                }//
+            }
+
+        }
+
+        saturacao(resultante_2);
+
+        if(ball_pos.x()==0)
+        {
+            vai_para(id,ball_pos.x(),ball_pos.y());
+        }
+        else
+        {
+            if(ball_pos.x()<=0)
+            {
+
+                if(zag_dist/dist < 0.9)
+                {
+                    //Comportamento sem bola : Defensivo
+
+                    /* dist_target = distância do alvo para a bola;
+                     * target = alvo da marcação;
+                     * (zag_dist/dist) = razão entre as distâcias do zagueiro para
+                     o atacante;
+                     */
+
+                    //Calculo do alvo de marcação
+                    double dist_target = 0.0;
+                    int target = 0;
+                    for(int player = 0; player < 3; player++)
+                    {
+                        double dist_adv = sqrt(pow(ball_pos.x()-adversario_pos[player].x(),2.0)+pow( ball_pos.y()-adversario_pos[player].y(),2.0));
+                        if(!(adversario_pos[player].x() > 0.65 || adversario_pos[player].x() < -0.65) && (dist_adv > dist_target))
+                        {
+                            dist_target = dist_adv;
+                            target = player;
+                        }
+                    }
+
+                    //Pos com relação ball-alvo
+                    double attachX = ball_pos.x() - (0.8*dist_target)*sin(atan2(ball_pos.x() - adversario_pos[target].x(),ball_pos.y() - adversario_pos[target].y()));
+                    double attachY = ball_pos.y() - (0.8*dist_target)*cos(atan2(ball_pos.x() - adversario_pos[target].x(),ball_pos.y() - adversario_pos[target].y()));
+
+                    vai_para(id,attachX,attachY);
+                }
+                else
+                    vai_para(id,0.10,(*resultante_2)[1]-0.1);
+
+            }else
+            {
+                //Comportamento Ofensivo - Posicionamento
+
+                //Cálculo da posição
+                double attachX =  ball_pos.x() + 0.45*sin(atan2(ball_pos.x() - meu_time_pos[idzag].x(),ball_pos.y() - meu_time_pos[idzag].y()));
+                //double attachY =  ball_pos.y() + 0.45*cos(atan2(ball_pos.x() - rb[1].x(),ball_pos.y() - rb[1].y()));
+                int c;
+                if(meu_time_pos[idzag].y()>0)
+                    c = -1;
+                else
+                    c = 1;
+
+                if(zag_dist/dist < 0.3)
+                    vai_para(id,attachX-0.1,c*0.25);
+                else
+                    vai_para(id,(*resultante_2)[0],(*resultante_2)[1]);
+
+                /*double distToGoal = sqrt(pow(meu_time_pos[id].x()-meioGolx,2.0)+pow(meu_time_pos[id].y()-0,2.0));
+                if(distToGoal < 0.5 && ball_pos.x()>meu_time_pos[id].x() && (ball_pos.y() < 0.20 && ball_pos.y()>-0.20) )
+                    vai_para(rb[id],ball_pos.x(),ball_pos.y(),id);*/
+
+
+                /*if(abs(rb[id].orientation()-gamma)<0.4 && (omega < gamma && gamma < roh))
+                {
+                    FIRE_KICK(id);
+                    bandeira = false;
+                }else
+                {
+                    bandeira = true;
+                }*/
+
+                if(ball_pos.x() > 0.65 && meu_time_pos[id].x() > 0.65 && dist < 0.08 && (ball_pos.y() < 0.18 && ball_pos.y() > -0.18)&& meu_time_pos[id].y()>ball_pos.y())
+                {
+                    //vai_para(rb[id],(*resultante_2)[0],(*resultante_2)[1],id);
+                    girar(id,0.25*Wmax);
+
+                }else if(ball_pos.x() > 0.65 && meu_time_pos[id].x() > 0.65 && dist < 0.08 && (ball_pos.y() < 0.18 && ball_pos.y() > -0.18)&& meu_time_pos[id].y()<ball_pos.y())
+                {
+                    girar(id,-0.25*Wmax);
+                }
+                else if((ball_pos.y()>0.55 && ball_pos.x()>0.65) && (dist < 0.08))
+                {
+                    girar(id,-0.25*Wmax);
+                }else if((ball_pos.y()<-0.55 && ball_pos.x()>0.65) && (dist < 0.08))
+                {
+                    girar(id,0.25*Wmax);
+                }
+
+            }
+        }
+
+    }else{ //Amarelo
+
+        if((ball_pos.x() > meu_time_pos[id].x()))
+        {
+            int a = 0;
+            //Consideração do vetor de predição
+            if(abs(ball_pos.y()-meu_time_pos[id].y()) > 0.3)
+                a = 1;
+            else if(abs(ball_pos.y()-meu_time_pos[id].y()) < 0.06 && dist < 0.2)
+            {
+                (*resultante_2)[0]=meu_time_pos[id].x();
+                (*resultante_2)[1]=meu_time_pos[id].y();
+            }
+
+
+            int c = 0;
+            if((ball_pos.x()/meu_time_pos[id].x()<1.1 && ball_pos.x()/meu_time_pos[id].x()>1)&&abs(ball_pos.y()-meu_time_pos[id].y()) > 0.1)
+                c = 1;
+
+            double repulsivoX;
+            double repulsivoY;
+
+            if(ball_pos.y() > meu_time_pos[id].y())
+            {
+                repulsivoX = (c*0.1+0.1)*sin(0+(c*0.5*M_PI));
+                repulsivoY = (c*0.1+0.1)*cos(0+(c*0.5*M_PI));
+            }else
+            {
+                repulsivoX = (c*0.1+0.1)*sin(M_PI-(c*0.5*M_PI));
+                repulsivoY = (c*0.1+0.1)*cos(M_PI-(c*0.5*M_PI));
+            }
+
+            //Componentes do Vetor direção
+            double angle = atan2(ball_pos.x()-predictedBall.x,ball_pos.y()-predictedBall.y);
+            componenteX = /*-c*ball_pos.x()*/ -  a*0.1*sin(angle) - repulsivoX;
+            componenteY = /*-c*ball_pos.y()*/ -  a*0.1*cos(angle) - repulsivoY;
+
+            (*resultante_2)[0]+= componenteX;
+            (*resultante_2)[1]+= componenteY;
+
+        }else
+        {
+            if(dist < 0.08)
+            {
+                (*resultante_2)[0]+=-gain*sin(beta+M_PI);
+                (*resultante_2)[1]+=-gain*cos(beta+M_PI);
+            }
+            else
+            {
+                if((ball_pos.x() > -0.6 && ball_pos.y() < -0.2)&& (meu_time_pos[id].y() > ball_pos.y())/*&&(abs(ball_pos.y()-blue[id].x())>0.07)*/)
+                {
+                    //Vetor de corrção
+                    componenteX = /*ball_pos.x()*/ -  0.1*sin(atan2(ball_pos.x() - meioGolx,ball_pos.y() - 0.0)/*+M_PI*/);
+                    componenteY = /*ball_pos.y()*/ -  0.1*cos(atan2(ball_pos.x() - meioGolx,ball_pos.y() - 0.0)/*+M_PI*/);
+
+                    (*resultante_2)[0]+=componenteX;
+                    (*resultante_2)[1]+=componenteY;
+                }else if((ball_pos.x() > -0.6 && ball_pos.y() > 0.2)&&(meu_time_pos[id].y() < ball_pos.y())/*&&(abs(ball_pos.y()-blue[id].x())>0.07)*/)
+                {
+                    //Vetor de corrção
+                    componenteX = /*ball_pos.x()*/ -  0.1*sin(atan2(ball_pos.x() - meioGolx,ball_pos.y() - 0.0)/*+M_PI*/);
+                    componenteY = /*ball_pos.y()*/ -  0.1*cos(atan2(ball_pos.x() - meioGolx,ball_pos.y() - 0.0)/*+M_PI*/);
+
+                    (*resultante_2)[0]+=componenteX;
+                    (*resultante_2)[1]+=componenteY;
+
+                }else if(dist > 0.2)
+                {
+                    (*resultante_2)[0]+= -0.1*sin(atan2(ball_pos.x() - meioGolx,ball_pos.y() - 0.0));
+                    (*resultante_2)[1]+= -0.1*cos(atan2(ball_pos.x() - meioGolx,ball_pos.y() - 0.0));
+                }
+                //atualização
+                if(((ball_pos.y()>0.25 && ball_pos.y()<0.6) && ball_pos.x() < -0.6 && meu_time_pos[id].x() <= ball_pos.x() && meu_time_pos[id].y()>0.25 && meu_time_pos[id].y()<ball_pos.y())
+                    ||( (ball_pos.y()<-0.25 && ball_pos.y()>-0.6) && ball_pos.x() < -0.6 && meu_time_pos[id].x() <= ball_pos.x() && meu_time_pos[id].y()<-0.25 && meu_time_pos[id].y()>ball_pos.y()))
+                {
+                    (*resultante_2)[0]+= -0.1*sin(M_PI/2);
+                    (*resultante_2)[1]+= -0.1*cos(M_PI/2);
+                }//
+            }
+
+        }
+
+        saturacao(resultante_2);
+
+        if(ball_pos.x()==0)
+        {
+            vai_para(id,ball_pos.x(),ball_pos.y());
+        }
+        else
+        {
+            if(ball_pos.x()>=0)
+            {
+
+                if(zag_dist/dist < 0.9)
+                {
+                    //Comportamento sem bola : Defensivo
+
+                    /* dist_target = distância do alvo para a bola;
+                     * target = alvo da marcação;
+                     * (zag_dist/dist) = razão entre as distâcias do zagueiro para
+                     o atacante;
+                     */
+
+                    //Calculo do alvo de marcação
+                    double dist_target = 0.0;
+                    int target = 0;
+                    for(int player = 0; player < 3; player++)
+                    {
+                        double dist_adv = sqrt(pow(ball_pos.x()-adversario_pos[player].x(),2.0)+pow( ball_pos.y()-adversario_pos[player].y(),2.0));
+                        if(!(adversario_pos[player].x() > 0.65 || adversario_pos[player].x() < -0.65) && (dist_adv > dist_target))
+                        {
+                            dist_target = dist_adv;
+                            target = player;
+                        }
+                    }
+
+                    //Pos com relação ball-alvo
+                    double attachX = ball_pos.x() - (0.8*dist_target)*sin(atan2(ball_pos.x() - adversario_pos[target].x(),ball_pos.y() - adversario_pos[target].y()));
+                    double attachY = ball_pos.y() - (0.8*dist_target)*cos(atan2(ball_pos.x() - adversario_pos[target].x(),ball_pos.y() - adversario_pos[target].y()));
+
+                    vai_para(id,attachX,attachY);
+                }
+                else
+                    vai_para(id,-0.10,(*resultante_2)[1]);
+
+            }else
+            {
+                //Comportamento Ofensivo - Posicionamento
+
+                //Cálculo da posição
+                double attachX =  ball_pos.x() + 0.45*sin(atan2(ball_pos.x() - meu_time_pos[idzag].x(),ball_pos.y() - meu_time_pos[idzag].y()));
+                //double attachY =  ball_pos.y() + 0.45*cos(atan2(ball_pos.x() - rb[1].x(),ball_pos.y() - rb[1].y()));
+                int c;
+                if(meu_time_pos[idzag].y()>0)
+                    c = -1;
+                else
+                    c = 1;
+
+                if(zag_dist/dist < 0.3)
+                    vai_para(id,attachX-0.1,c*0.25);
+                else
+                    vai_para(id,(*resultante_2)[0],(*resultante_2)[1]);
+
+                if(ball_pos.x() < -0.65 && meu_time_pos[id].x() < -0.65 && dist < 0.08 && (ball_pos.y() < 0.18 && ball_pos.y() > -0.18)&& meu_time_pos[id].y()>ball_pos.y())
+                {
+                    //vai_para(rb[id],(*resultante_2)[0],(*resultante_2)[1],id);
+                    girar(id,-0.25*Wmax);
+
+                }else if(ball_pos.x() < -0.65 && meu_time_pos[id].x() < -0.65 && dist < 0.08 && (ball_pos.y() < 0.18 && ball_pos.y() > -0.18)&& meu_time_pos[id].y()<ball_pos.y())
+                {
+                    girar(id,0.25*Wmax);
+                }
+                else if((ball_pos.y()>0.55 && ball_pos.x()<-0.65) && (dist < 0.08))
+                {
+                    girar(id,0.25*Wmax);
+                }else if((ball_pos.y()<-0.55 && ball_pos.x()<-0.65) && (dist < 0.08))
+                {
+                    girar(id,-0.25*Wmax);
+                }
+
+            }
+
+        }
+    }
+    //se tiver uma reta clara pro gol, ele vai chutar
+    // FIRE_KICK_old(rb[id],ball,id);
+    fire_kick(id,_time);
+}
+
 
 void estrategia::estrategias(int t_estrategia)
 {
@@ -1149,6 +1740,12 @@ void estrategia::atacantes(int t_atacante)
         else
             atacante_01(id_atacante,AZUL);
         break;
+    case ATACANTE_02:
+        if(nossaCor==VSSRef::YELLOW)
+            atacante_02(id_atacante,id_zagueiro,AMARELO);
+        else
+            atacante_02(id_atacante,id_zagueiro,AZUL);
+        break;
     case VAI_PARA:
         vai_para(id_atacante,this->ball_pos.x(),this->ball_pos.y());
         break;
@@ -1178,6 +1775,13 @@ void estrategia::zagueiros(int t_zagueiro)
             atacante_01(id_zagueiro,AZUL);
 
         break;
+    case ZAG_ATACANTE_02:
+        if(nossaCor==VSSRef::Color::YELLOW)
+            atacante_02(id_zagueiro,id_atacante,AMARELO);
+        else
+            atacante_02(id_zagueiro,id_atacante,AZUL);
+
+        break;
     case ZAGUEIRO_01:
         std::cout << "Zagueiro 01" << "\n";
         if(nossaCor==VSSRef::Color::YELLOW)
@@ -1199,6 +1803,12 @@ void estrategia::goleiros(int t_goleiro)
             goleiro_01(id_goleiro,AMARELO);
         else
             goleiro_01(id_goleiro,AZUL);
+        break;
+    case GOLEIRO_02:
+        if(nossaCor==VSSRef::YELLOW)
+            goleiro_02(id_goleiro,AMARELO);
+        else
+            goleiro_02(id_goleiro,AZUL);
         break;
     case VAI_PARA:
         vai_para(id_goleiro,this->ball_pos.x(),this->ball_pos.y());
@@ -1227,6 +1837,7 @@ QList<QString> estrategia::obter_atacantes()
     aux.insert(0,QString("PARADO"));
     aux.insert(1,QString("Vai Para"));
     aux.insert(2,QString("Atacante 01"));
+    aux.insert(3,QString("Atacante 02"));
     return aux;
 }
 
@@ -1237,6 +1848,8 @@ QList<QString> estrategia::obter_zagueiros()
     aux.insert(1,QString("Vai Para"));
     aux.insert(2,QString("Atacante 01"));
     aux.insert(3,QString("Zagueiro 01"));
+    aux.insert(4,QString("Atacante 02"));
+
     return aux;
 }
 
@@ -1246,6 +1859,7 @@ QList<QString> estrategia::obter_goleiros()
     aux.insert(0,QString("PARADO"));
     aux.insert(1,QString("Vai Para"));
     aux.insert(2,QString("Goleiro 01"));
+    aux.insert(3,QString("Goleiro 02"));
     return aux;
 }
 

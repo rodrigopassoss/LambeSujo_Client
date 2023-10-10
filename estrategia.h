@@ -8,11 +8,13 @@
 #include <QList>
 
 enum comandos {PARADOS=0,DEFAULT=1,DIA_09=2,REPOSICIONAR,REPOSICIONAR2};
-enum atacante {PARADO=0, VAI_PARA=1,ATACANTE_01=2};
-enum zagueiro {ZAG_ATACANTE_01=2,ZAGUEIRO_01=3};
-enum goleiro {GOLEIRO_01=2};
+enum atacante {PARADO=0, VAI_PARA=1,ATACANTE_01=2,ATACANTE_02=3};
+enum zagueiro {ZAG_ATACANTE_01=2,ZAGUEIRO_01=3,ZAG_ATACANTE_02=4};
+enum goleiro {GOLEIRO_01=2,GOLEIRO_02=3};
 enum time {AMARELO=-1,AZUL=1};
 enum ID_JOGADORES {id_atacante=0,id_goleiro=1,id_zagueiro=2};
+
+using namespace std;
 
 struct ballPredPos
 {
@@ -68,6 +70,7 @@ public:
     void calc_repulsao2(int id, float F[],bool flag);  // calculo de repulsao para o posicionamento2
     void converte_vetor(float V[],float raio);
     void saturacao(float _pos[]);
+    void saturacao(vector <double> *V);
     bool passagem_limpa(int id,float x_des, float y_des);
     void fire_kick(int id, int _time);
     void predict_ball(int futureTime=50);
@@ -80,6 +83,14 @@ public:
     void atacante_01(int id, int _time); bool flag_atacante1; bool flag_atacante2; bool flag_atacante3;
     void goleiro_01(int id, int _time, float x = -0.7, float topl = 0.17);
     void zagueiro_01(int id, int _time);
+    void atacante_02(int id, int idzag, int _time);
+                //Atributos para atacante_coneLaam
+                std::vector<std::pair<double,double>>* componentes_2 = NULL;
+                std::vector<double>* resultante_2 = NULL;
+                std::vector<std::string>* name_vectors = NULL;
+    void goleiro_02(int id, int _time);
+
+
 
     //Flags de seleção dos jogadores e estratégia
     int sel_atacante,sel_zagueiro,sel_goleiro,sel_estrategia;
